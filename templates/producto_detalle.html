@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}{{ producto.nombre }} - bycint Cosméticos{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-6xl">
+  <div class="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
+    <!-- Galería vertical -->
+    <div class="flex flex-row w-full md:w-1/2 items-center justify-center">
+      <div class="flex flex-col gap-4 items-center mr-6">
+        <img src="{{ url_for('static', filename='img/' ~ producto.imagen) }}" class="w-20 h-20 object-contain rounded-lg border-4 border-green-500 cursor-pointer bg-white transition-all duration-200 ring-2 ring-green-400" onclick="seleccionarMiniatura(this)" id="miniatura-1">
+        <img src="{{ url_for('static', filename='img/categoria_maquillaje.png') }}" class="w-20 h-20 object-contain rounded-lg border-4 border-gray-200 cursor-pointer bg-white transition-all duration-200" onclick="seleccionarMiniatura(this)" id="miniatura-2">
+        <img src="{{ url_for('static', filename='img/categoria_cuidado.png') }}" class="w-20 h-20 object-contain rounded-lg border-4 border-gray-200 cursor-pointer bg-white transition-all duration-200" onclick="seleccionarMiniatura(this)" id="miniatura-3">
+      </div>
+      <div class="flex flex-col justify-center items-center flex-1">
+        <img id="main-img" src="{{ url_for('static', filename='img/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="w-[420px] h-[420px] object-contain rounded-2xl shadow bg-white border border-gray-200 mx-auto">
+      </div>
+    </div>
+    <!-- Info principal -->
+    <div class="flex-1 flex flex-col justify-center">
+      <div class="flex items-start justify-between gap-4">
+        <h1 class="text-2xl font-bold mb-2">{{ producto.nombre }}</h1>
+        <button class="text-2xl text-gray-400 hover:text-red-500 transition"><i class="fa-regular fa-heart"></i></button>
+      </div>
+      <div class="flex items-center gap-2 mb-2">
+        {% for i in range(1, 6) %}
+          {% if producto.calificacion and producto.calificacion >= i %}
+            <span class="text-yellow-400 text-lg"><i class="fa-solid fa-star"></i></span>
+          {% elif producto.calificacion and producto.calificacion > i-1 %}
+            <span class="text-yellow-400 text-lg"><i class="fa-solid fa-star-half-stroke"></i></span>
+          {% else %}
+            <span class="text-yellow-400 text-lg"><i class="fa-regular fa-star"></i></span>
+          {% endif %}
+        {% endfor %}
+        <span class="text-sm text-gray-500">({{ producto.reviews or 0 }})</span>
+      </div>
+      <div class="mb-2">
+        {% for etiqueta in producto.etiquetas %}
+          <span class="inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded mr-2">{{ etiqueta }}</span>
+        {% endfor %}
+      </div>
+      <div class="flex items-center gap-3 mb-2">
+        {% if producto.precio_original %}
+          <span class="text-gray-400 line-through text-lg">S/ {{ '%.2f' % producto.precio_original }}</span>
+        {% endif %}
+        <span class="text-green-600 text-2xl font-bold">S/ {{ '%.2f' % producto.precio }}</span>
+        {% if producto.precio_original %}
+          <span class="text-xs text-green-700 font-bold bg-green-50 px-2 py-1 rounded">Ahorra S/ {{ '%.2f' % (producto.precio_original - producto.precio) }}</span>
+        {% endif %}
+      </div>
+      <div class="mb-4 text-sm text-gray-700">{{ producto.descripcion }}</div>
+      <div class="mb-6 flex items-center gap-4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/LeapingBunny.svg" alt="Cruelty Free" class="h-10">
+        <span class="text-xs text-gray-500">Cruelty Free International</span>
+      </div>
+      <div class="flex flex-col gap-2">
+        <button class="flex justify-between items-center w-full py-3 border-b text-left font-semibold text-gray-800 group" onclick="toggleAccordion('desc')">
+          Descripción <span><i class="fa fa-chevron-down group-hover:rotate-180 transition-transform"></i></span>
+        </button>
+        <div id="desc" class="hidden text-gray-600 text-sm pb-3">{{ producto.descripcion }}</div>
+        <button class="flex justify-between items-center w-full py-3 border-b text-left font-semibold text-gray-800 group" onclick="toggleAccordion('razones')">
+          Razones para amarlo <span><i class="fa fa-chevron-down group-hover:rotate-180 transition-transform"></i></span>
+        </button>
+        <div id="razones" class="hidden text-gray-600 text-sm pb-3">
+          {% if producto.beneficios %}
+            <ul class="list-disc pl-5">
+              {% for b in producto.beneficios %}<li>{{ b }}</li>{% endfor %}
+            </ul>
+          {% else %}
+            - Hidrata y suaviza<br>- No deja sensación grasa<br>- Apto para piel sensible
+          {% endif %}
+        </div>
+        <button class="flex justify-between items-center w-full py-3 border-b text-left font-semibold text-gray-800 group" onclick="toggleAccordion('como')">
+          ¿Cómo usarlo? <span><i class="fa fa-chevron-down group-hover:rotate-180 transition-transform"></i></span>
+        </button>
+        <div id="como" class="hidden text-gray-600 text-sm pb-3">Agita antes de usar. Aplica con un algodón sobre ojos y rostro. No necesita enjuague.</div>
+      </div>
+    </div>
+  </div>
+  <!-- Barra agregar a la bolsa (sección normal, no fija) -->
+  <div class="bg-white border-t shadow-lg py-4 px-6 flex items-center justify-between max-w-3xl mx-auto mt-8 rounded-xl">
+    <div class="flex items-center gap-4">
+      <img src="{{ url_for('static', filename='img/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="w-12 h-12 object-contain rounded">
+      <div>
+        <div class="font-bold text-sm">{{ producto.nombre }}</div>
+        <div class="text-green-600 font-bold text-base">S/ {{ '%.2f' % producto.precio }}</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="w-8 h-8 rounded bg-gray-200 text-lg font-bold" onclick="cambiarCantidad(-1)">-</button>
+      <input id="cantidad" type="number" value="1" min="1" class="w-12 text-center border rounded">
+      <button class="w-8 h-8 rounded bg-gray-200 text-lg font-bold" onclick="cambiarCantidad(1)">+</button>
+    </div>
+    <button class="bg-red-600 text-white px-8 py-2 rounded font-bold hover:bg-red-700 transition btn-add-cart" data-id="{{ producto.id }}">Agregar a la bolsa</button>
+  </div>
+  <!-- Productos relacionados -->
+  <div class="mt-12">
+    {% set productos = productos_relacionados %}
+    {% set titulo = '¡Esto también te puede gustar!' %}
+    {% include 'componentes_carrusel_productos.html' %}
+  </div>
+</div>
+<script>
+function toggleAccordion(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('hidden');
+}
+function cambiarCantidad(delta) {
+  const input = document.getElementById('cantidad');
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  input.value = val;
+}
+function seleccionarMiniatura(img) {
+  document.getElementById('main-img').src = img.src;
+  document.querySelectorAll('.flex-row img').forEach(el => {
+    el.classList.remove('border-green-500', 'ring-2', 'ring-green-400');
+    el.classList.add('border-gray-200');
+  });
+  img.classList.remove('border-gray-200');
+  img.classList.add('border-green-500', 'ring-2', 'ring-green-400');
+}
+// Swiper para relacionados
+if (document.querySelector('.relacionadosSwiper')) {
+  new Swiper('.relacionadosSwiper', {
+    slidesPerView: 2,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: { slidesPerView: 3 },
+      1024: { slidesPerView: 5 },
+    },
+  });
+}
+// Evento para agregar al carrito
+const addBtn = document.querySelector('.btn-add-cart');
+if (addBtn) {
+  addBtn.addEventListener('click', function() {
+    const productoId = addBtn.getAttribute('data-id');
+    const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+    addBtn.disabled = true;
+    fetch('/api/agregar_carrito', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({ producto_id: productoId, cantidad: cantidad })
+    })
+    .then(res => {
+      if (res.status === 401) {
+        alert('Debes iniciar sesión para agregar al carrito');
+        setTimeout(() => window.location.href = '/login', 1500);
+        throw new Error('No logueado');
+      }
+      return res.json();
+    })
+    .then(data => {
+      addBtn.disabled = false;
+      if (data.success) {
+        let notif = document.createElement('div');
+        notif.className = 'fixed top-6 right-6 z-50 px-6 py-3 rounded shadow-lg text-white font-bold transition-all bg-green-600';
+        notif.textContent = 'Producto agregado al carrito';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 2000);
+        // Actualizar contador
+        fetch('/api/carrito').then(res => res.json()).then(data => {
+          const badge = document.getElementById('cart-count');
+          if (badge) {
+            if (data.cantidad > 0) {
+              badge.textContent = data.cantidad;
+              badge.classList.remove('hidden');
+            } else {
+              badge.textContent = '';
+              badge.classList.add('hidden');
+            }
+          }
+        });
+      } else {
+        alert(data.message || 'No se pudo agregar');
+      }
+    })
+    .catch((err) => {
+      addBtn.disabled = false;
+      if (err.message !== 'No logueado') {
+        alert('Error al agregar al carrito');
+      }
+    });
+  });
+}
+</script>
+{% endblock %} 

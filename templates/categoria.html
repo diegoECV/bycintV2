@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ categoria|capitalize }} - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Filtros avanzados -->
+    <aside class="w-full lg:w-64 bg-white rounded-2xl shadow-xl p-6 mb-6 lg:mb-0 border border-gray-100">
+      <h2 class="font-extrabold text-2xl mb-6 text-green-600">{{ categoria|capitalize }}</h2>
+      <form id="filtros-categoria" class="flex flex-col gap-6" data-categoria="{{ categoria }}">
+        {% for filtro in filtros %}
+        <div>
+          <label class="block font-semibold mb-2">{{ filtro.nombre }}</label>
+          <div class="flex flex-col gap-1">
+            {% for opcion in filtro.opciones %}
+            <label><input type="checkbox" name="{{ filtro.nombre|lower|replace(' ', '_') }}" value="{{ opcion }}"> {{ opcion }}</label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+        <div>
+          <label class="block font-semibold mb-2">Rango de precio</label>
+          <input type="range" name="precio" min="{{ filtro_precio.min }}" max="{{ filtro_precio.max }}" value="{{ filtro_precio.max }}" class="w-full accent-red-500" id="precio-slider">
+          <div class="flex justify-between text-xs mt-1">
+            <span>S/ <span id="precio-min">{{ filtro_precio.min }}</span></span>
+            <span>S/ <span id="precio-max">{{ filtro_precio.max }}</span></span>
+          </div>
+        </div>
+      </form>
+    </aside>
+    <!-- Grid de productos -->
+    <section class="flex-1">
+      <div class="flex items-center justify-between mb-8">
+        <span id="contador-productos" class="text-base font-semibold text-gray-700"></span>
+        <div class="flex items-center gap-4">
+          <label class="text-base font-semibold">Ordenar por</label>
+          <select id="ordenar-categoria" class="border rounded px-3 py-2 shadow-sm focus:ring-2 focus:ring-green-200">
+            <option value="relevancia">Relevancia</option>
+            <option value="fecha">Fecha de release</option>
+            <option value="descuento">Descuento</option>
+            <option value="mayor">Precio: mayor a menor</option>
+            <option value="menor">Precio: menor a mayor</option>
+          </select>
+        </div>
+      </div>
+      <div id="productos-categoria-lista" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-center"></div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/categoria.js') }}"></script>
+{% endblock %} 

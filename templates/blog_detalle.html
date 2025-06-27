@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ blog.titulo }} - Comunidad bycint{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-3xl">
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <img src="{{ url_for('static', filename='img/' ~ blog.imagen) }}" alt="{{ blog.titulo }}" class="w-40 h-40 object-cover rounded-full mx-auto mb-4 shadow">
+        <h1 class="text-3xl font-extrabold text-green-500 mb-4 text-center">{{ blog.titulo }}</h1>
+        <div class="text-gray-700 text-lg mb-6 text-center">{{ blog.contenido }}</div>
+    </div>
+    <!-- Sección de puntuación y comentarios -->
+    <div class="bg-gray-50 rounded-xl shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Puntúa y comenta este artículo</h2>
+        <form method="POST" class="mb-6">
+            <div class="flex items-center gap-2 mb-2">
+                <label class="font-semibold mr-2">Tu puntuación:</label>
+                {% for i in range(1,6) %}
+                    <label>
+                        <input type="radio" name="puntuacion" value="{{ i }}" class="hidden" required>
+                        <span class="text-2xl cursor-pointer text-yellow-400">&#9733;</span>
+                    </label>
+                {% endfor %}
+            </div>
+            <textarea name="comentario" rows="2" required placeholder="Escribe tu comentario..." class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-200 mb-2"></textarea>
+            <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded font-semibold hover:bg-green-600 transition">Enviar comentario</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="mb-2 p-3 rounded text-sm {% if category == 'success' %}bg-green-100 text-green-800 border border-green-300{% elif category == 'error' %}bg-red-100 text-red-800 border border-red-300{% else %}bg-yellow-100 text-yellow-800 border border-yellow-300{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h3 class="font-bold text-lg mt-6 mb-2 text-gray-700">Comentarios recientes</h3>
+        {% if comentarios %}
+            <ul class="space-y-4">
+                {% for c in comentarios|reverse %}
+                <li class="bg-white rounded shadow p-4">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-semibold text-green-600">{{ c.usuario.split('@')[0] }}</span>
+                        <span class="text-yellow-400 text-lg">{{ '★' * c.puntuacion }}{{ '☆' * (5-c.puntuacion) }}</span>
+                    </div>
+                    <div class="text-gray-800">{{ c.comentario }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="text-gray-500">Aún no hay comentarios. ¡Sé la primera en comentar!</div>
+        {% endif %}
+    </div>
+    <div class="text-center mt-8">
+        <a href="{{ url_for('comunidad') }}" class="text-green-600 hover:underline font-semibold">&larr; Volver a la comunidad</a>
+    </div>
+</div>
+{% endblock %} 

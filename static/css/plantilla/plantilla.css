@@ -1,0 +1,12 @@
+/* Estilos personalizados para la plantilla de bycint Cosméticos */
+
+.hero-shadow {
+    box-shadow: 0 8px 32px 0 rgba(60, 180, 120, 0.15);
+}
+
+.categoria-hover:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s;
+}
+
+/* Puedes agregar más estilos personalizados aquí */ 

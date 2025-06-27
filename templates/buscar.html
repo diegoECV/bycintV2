@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar: {{ query }} - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Resultados de búsqueda para: <span class="text-green-600">{{ query }}</span></h1>
+    {% if resultados %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for prod in resultados %}
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+                <img src="{{ url_for('static', filename='img/' ~ prod[4]) }}" alt="{{ prod[1] }}" class="w-24 h-24 mb-4 object-contain">
+                <h2 class="text-lg font-bold mb-2">{{ prod[1] }}</h2>
+                <p class="text-gray-600 text-sm mb-2">{{ prod[2][:80] }}{% if prod[2]|length > 80 %}...{% endif %}</p>
+                <span class="text-green-600 font-semibold text-xl mb-2">${{ '%.2f'|format(prod[3]) }}</span>
+                <a href="#" class="mt-2 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Ver producto</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-yellow-800 rounded">
+            No se encontraron productos para tu búsqueda.
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

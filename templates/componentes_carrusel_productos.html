@@ -1,0 +1,33 @@
+<div class="my-8">
+  <h2 class="text-2xl font-bold mb-4 text-center">{{ titulo }}</h2>
+  <div class="relative overflow-hidden max-w-full lg:w-[1400px] mx-auto bg-white rounded-xl">
+    <!-- Swiper -->
+    <div class="productosSwiper">
+      <div class="swiper-wrapper">
+        {% for producto in productos %}
+        <div class="swiper-slide flex flex-col bg-white rounded-2xl shadow-lg p-6 items-center relative group min-w-[260px] max-w-[260px] h-full justify-between">
+          {% if producto.descuento %}
+            <span class="absolute left-5 top-5 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded">{{ producto.descuento }}% OFF</span>
+          {% endif %}
+          <button class="absolute right-5 top-5 text-gray-300 hover:text-red-500 text-2xl transition btn-fav"><i class="fa-regular fa-heart"></i></button>
+          <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}" class="w-32 h-32 object-contain mb-4 rounded bg-white">
+          <h3 class="text-base font-bold text-center mb-1">{{ producto.nombre }}</h3>
+          <div class="flex items-center gap-2 mb-3">
+            {% if producto.precio_original %}
+              <span class="text-gray-400 line-through text-sm">S/ {{ '%.2f' % producto.precio_original }}</span>
+            {% endif %}
+            <span class="text-black font-bold text-lg">S/ {{ '%.2f' % producto.precio }}</span>
+          </div>
+          <div class="flex-1"></div>
+          <a href="/producto/{{ producto.id }}" class="w-full mt-2 inline-block bg-black text-white px-4 py-2 rounded-lg hover:bg-green-600 transition text-center font-semibold">Ver detalle</a>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Botones navegación -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+    <!-- ÚNICO div de bullets de paginación debajo del carrusel -->
+    <div class="swiper-pagination mt-6 flex justify-center"></div>
+  </div>
+</div> 

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Comunidad - bycint Cosméticos{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: none; }
+    }
+    .animate-fadein { animation: fadein 0.7s cubic-bezier(.4,0,.2,1); }
+  </style>
+  <!-- SwiperJS CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 lg:px-0 py-12">
+    <h1 class="text-4xl font-extrabold text-green-500 mb-8 text-center uppercase tracking-wide">Comunidad & Blog</h1>
+    <div class="w-full mx-auto text-center mb-10">
+        <p class="text-lg text-gray-700">Bienvenida a la comunidad exclusiva de bycint. Aquí encontrarás blogs, noticias, tips y novedades del mundo de la belleza. ¡Comenta, puntúa y sé parte activa!</p>
+    </div>
+</div>
+<!-- Carrusel Swiper fuera del container para ancho completo -->
+<div class="w-screen px-0 overflow-x-hidden">
+  <div class="w-full max-w-7xl mx-auto px-4">
+    <div class="relative">
+      <div class="swiper blogSwiper">
+        <div class="swiper-wrapper">
+          {% for blog in blogs %}
+          <div class="swiper-slide flex justify-center">
+            <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center w-full max-w-[260px] min-h-[420px] h-full hover:shadow-green-200 hover:shadow-2xl hover:-translate-y-2 transition-all border border-green-100 relative group">
+              <div class="w-full flex flex-col items-center mb-4 relative">
+                <div class="w-32 h-32 flex items-center justify-center relative mb-2">
+                  <img src="{{ url_for('static', filename='img/' ~ blog.imagen) }}" alt="{{ blog.titulo }}" class="w-32 h-32 object-cover rounded-xl shadow border-4 border-green-100 group-hover:border-green-400 transition">
+                  <span class="absolute top-1 left-1 px-2 py-1 rounded-full shadow text-xs font-bold z-10"
+                    style="background-color: {% if blog.categoria == 'Maquillaje' %}#f472b6{% elif blog.categoria == 'Cuidado de la piel' %}#facc15{% elif blog.categoria == 'Cosmética natural' %}#34d399{% elif blog.categoria == 'Perfumería' %}#818cf8{% elif blog.categoria == 'Joyería' %}#fbbf24{% elif blog.categoria == 'Accesorios' %}#38bdf8{% else %}#22d3ee{% endif %}; color: white;">
+                    {{ blog.categoria }}
+                  </span>
+                </div>
+              </div>
+              <div class="flex-1 w-full flex flex-col items-center justify-start">
+                <h2 class="text-lg font-extrabold mb-2 text-center text-gray-900 group-hover:text-green-600 transition">{{ blog.titulo }}</h2>
+                <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                  <i class="fa-solid fa-user"></i> {{ blog.autor }}
+                  <span class="mx-1">·</span>
+                  <i class="fa-solid fa-calendar"></i> {{ blog.fecha_publicacion }}
+                </div>
+                <p class="text-gray-600 text-sm mb-4 text-center leading-relaxed">{{ blog.resumen }}</p>
+              </div>
+              <div class="w-full flex justify-center mt-auto">
+                <a href="{{ url_for('blog_detalle', blog_id=blog.id) }}" class="inline-flex items-center gap-2 bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition font-semibold shadow w-full justify-center">
+                  <i class="fa-solid fa-book-open"></i> Leer más
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <!-- Flechas -->
+        <div class="swiper-button-next text-green-600"></div>
+        <div class="swiper-button-prev text-green-600"></div>
+        <!-- Paginación -->
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- SwiperJS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.blogSwiper', {
+      slidesPerView: 1,
+      spaceBetween: 32,
+      loop: true,
+      centeredSlides: false,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 4 },
+      },
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/blog.js') }}"></script>
+{% endblock %} 

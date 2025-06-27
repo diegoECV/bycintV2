@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Detalle del Pedido #{{ pedido.id }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
+  <h1 class="text-2xl font-bold mb-4 text-indigo-700">Pedido #{{ pedido.id }}</h1>
+  <div class="mb-4 text-gray-600">
+    <span class="mr-4">Fecha: <b>{{ pedido.fecha }}</b></span>
+    <span class="mr-4">Estado: <b>{{ pedido.estado }}</b></span>
+    <span>Total: <b class="text-green-700">S/ {{ '%.2f' % pedido.total }}</b></span>
+  </div>
+  <h2 class="text-lg font-semibold mb-2">Productos</h2>
+  <div class="divide-y">
+    {% for prod in pedido.productos %}
+    <div class="flex items-center py-4 gap-4">
+      <img src="{{ url_for('static', filename='img/' ~ prod.imagen) }}" class="w-16 h-16 object-contain rounded shadow" alt="{{ prod.nombre }}">
+      <div>
+        <div class="font-bold">{{ prod.nombre }}</div>
+        <div class="text-sm text-gray-500">Cantidad: {{ prod.cantidad }}</div>
+        <div class="text-sm text-gray-500">Precio unitario: S/ {{ '%.2f' % prod.precio_unitario }}</div>
+        <div class="text-green-700 font-bold">Subtotal: S/ {{ '%.2f' % prod.subtotal }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <a href="{{ url_for('mis_pedidos') }}" class="inline-block mt-6 text-indigo-600 hover:underline">← Volver a mis pedidos</a>
+</div>
+{% endblock %} 

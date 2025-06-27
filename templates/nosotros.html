@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Nosotras - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <h1 class="text-4xl font-extrabold text-green-500 mb-8 text-center uppercase tracking-wide">Sobre Nosotras</h1>
+    <div class="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto mb-12 items-center">
+        <!-- Foto de la tienda -->
+        <div class="flex justify-center">
+            <img src="{{ url_for('static', filename='img/tienda.jpg') }}" alt="Foto de la tienda bycint" class="rounded-xl shadow-lg w-full max-w-xs md:max-w-sm object-cover">
+        </div>
+        <!-- Presentación -->
+        <div>
+            <h2 class="text-2xl font-bold mb-3 text-gray-800">Bienvenida a <span class="text-green-500">bycint Cosméticos</span></h2>
+            <p class="mb-4 text-gray-700">Somos un emprendimiento liderado por mujeres apasionadas por la belleza, la innovación y el bienestar. Creemos en la autenticidad, la autoexpresión y el poder de cuidarse a una misma.</p>
+            <ul class="list-disc pl-6 text-gray-700 mb-4">
+                <li>Productos cruelty-free y amigables con el medio ambiente</li>
+                <li>Atención personalizada y asesoría de belleza</li>
+                <li>Promociones y lanzamientos exclusivos cada mes</li>
+            </ul>
+            <p class="text-gray-700">¡Gracias por confiar en nosotras! Queremos acompañarte en tu rutina de belleza y autocuidado.</p>
+        </div>
+    </div>
+    <!-- Misión, Visión, Objetivo -->
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
+        <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border-t-4 border-green-400">
+            <span class="text-3xl mb-2 text-green-500"><i class="fa-solid fa-bullseye"></i></span>
+            <h3 class="font-bold text-lg mb-2">Misión</h3>
+            <p class="text-gray-700">Ofrecer productos de belleza de alta calidad, seguros y accesibles, que realcen la belleza única de cada persona y promuevan el autocuidado consciente.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border-t-4 border-pink-400">
+            <span class="text-3xl mb-2 text-pink-500"><i class="fa-solid fa-eye"></i></span>
+            <h3 class="font-bold text-lg mb-2">Visión</h3>
+            <p class="text-gray-700">Ser la tienda de referencia en cosmética y cuidado personal, reconocida por su compromiso con la calidad, la innovación y el bienestar de la comunidad.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border-t-4 border-yellow-400">
+            <span class="text-3xl mb-2 text-yellow-500"><i class="fa-solid fa-star"></i></span>
+            <h3 class="font-bold text-lg mb-2">Objetivo</h3>
+            <p class="text-gray-700">Empoderar a cada cliente para que se sienta segura, bella y auténtica, brindando productos y experiencias que inspiren confianza y alegría.</p>
+        </div>
+    </div>
+    <!-- Oferta de valor y valores -->
+    <div class="max-w-5xl mx-auto mb-12">
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">¿Qué ofrecemos?</h2>
+        <div class="grid md:grid-cols-4 gap-6 text-center">
+            <div class="bg-green-50 rounded-lg p-6 shadow flex flex-col items-center">
+                <span class="text-2xl mb-2 text-green-600"><i class="fa-solid fa-leaf"></i></span>
+                <span class="font-semibold">Cosmética natural y segura</span>
+            </div>
+            <div class="bg-green-50 rounded-lg p-6 shadow flex flex-col items-center">
+                <span class="text-2xl mb-2 text-pink-500"><i class="fa-solid fa-heart"></i></span>
+                <span class="font-semibold">Atención personalizada</span>
+            </div>
+            <div class="bg-green-50 rounded-lg p-6 shadow flex flex-col items-center">
+                <span class="text-2xl mb-2 text-yellow-500"><i class="fa-solid fa-gift"></i></span>
+                <span class="font-semibold">Promociones y regalos</span>
+            </div>
+            <div class="bg-green-50 rounded-lg p-6 shadow flex flex-col items-center">
+                <span class="text-2xl mb-2 text-blue-500"><i class="fa-solid fa-hand-holding-heart"></i></span>
+                <span class="font-semibold">Apoyo a marcas locales</span>
+            </div>
+        </div>
+    </div>
+    <!-- Extra: Testimonios o llamada a la acción -->
+    <div class="max-w-3xl mx-auto text-center mt-12">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">¡Únete a nuestra comunidad!</h2>
+        <p class="text-gray-700 mb-6">Síguenos en redes sociales para descubrir tips de belleza, lanzamientos y promociones exclusivas. ¡Queremos inspirarte cada día!</p>
+        <div class="flex justify-center space-x-4 text-2xl">
+            <a href="#" class="hover:text-green-500"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="hover:text-blue-400"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="hover:text-black"><i class="fab fa-tiktok"></i></a>
+            <a href="#" class="hover:text-green-500"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

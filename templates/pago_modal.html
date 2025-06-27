@@ -1,0 +1,177 @@
+<div id="payment-modal-overlay" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 relative border-2 border-blue-100">
+    <button id="close-payment-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold transition">&times;</button>
+    <div class="flex flex-col md:flex-row gap-10">
+      <!-- Formulario de pago -->
+      <form id="payment-form" class="flex-1 space-y-8">
+        <div>
+          <label class="block font-bold mb-2 text-blue-700">Seleccione un método de pago</label>
+          <select id="payment-method" name="payment_method" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50 font-semibold">
+            <option value="visa">Visa</option>
+            <option value="mastercard">Mastercard</option>
+            <option value="bcp">BCP</option>
+            <option value="yape">Yape</option>
+          </select>
+          <span class="text-xs text-gray-500">Obligatorio</span>
+        </div>
+        <div id="card-details">
+          <label id="card-number-label" class="block font-semibold mb-1">Número de Tarjeta</label>
+          <input type="text" id="card-number" maxlength="19" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50" />
+          <span class="text-xs text-gray-500">Obligatorio</span>
+          <div class="flex gap-4 mt-2">
+            <div class="flex-1">
+              <label class="block text-sm">Fecha de caducidad</label>
+              <div class="flex gap-2">
+                <select id="expiry-month" class="w-1/2 border-2 border-blue-200 rounded-lg px-2 py-1 bg-blue-50">
+                  <option value="" disabled selected>MM</option>
+                  {% for m in range(1,13) %}
+                  <option value="{{'%02d' % m}}">{{'%02d' % m}}</option>
+                  {% endfor %}
+                </select>
+                <select id="expiry-year" class="w-1/2 border-2 border-blue-200 rounded-lg px-2 py-1 bg-blue-50">
+                  <option value="" disabled selected>AAAA</option>
+                  {% for y in range(current_year, current_year+6) %}
+                  <option value="{{y}}">{{y}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="flex-1">
+              <label class="block text-sm">Código de seguridad</label>
+              <input type="password" id="security-code" maxlength="4" class="w-full border-2 border-blue-200 rounded-lg px-2 py-1 bg-blue-50" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="font-bold text-lg mb-2 text-blue-700">DETALLE DE FACTURACIÓN</h2>
+          <div class="flex gap-4">
+            <input type="text" id="first-name" placeholder="Nombre" class="flex-1 border-2 border-blue-200 rounded-lg px-4 py-2 bg-blue-50" />
+            <input type="text" id="last-name" placeholder="Apellido" class="flex-1 border-2 border-blue-200 rounded-lg px-4 py-2 bg-blue-50" />
+          </div>
+          <input type="text" id="id-document" placeholder="Documento de identidad" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+          <div class="flex gap-2 mt-2">
+            <select id="phone-prefix" class="w-1/4 border-2 border-blue-200 rounded-lg px-2 py-1 bg-blue-50">
+              <option value="+51">+51</option>
+              <option value="+52">+52</option>
+              <option value="+54">+54</option>
+            </select>
+            <input type="tel" id="phone" placeholder="Teléfono" class="w-3/4 border-2 border-blue-200 rounded-lg px-4 py-2 bg-blue-50" />
+          </div>
+          <input type="email" id="email" placeholder="Correo electrónico" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+          <input type="text" id="address" placeholder="Dirección" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+          <input type="text" id="country" placeholder="País / Región" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+          <input type="text" id="region" placeholder="Región / Provincia" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+          <input type="text" id="city" placeholder="Ciudad" class="w-full border-2 border-blue-200 rounded-lg px-4 py-2 mt-2 bg-blue-50" />
+        </div>
+      </form>
+      <!-- Resumen del pedido -->
+      <div class="flex-1 bg-blue-50 rounded-2xl p-8 shadow-lg border-2 border-blue-100">
+        <h2 class="text-xl font-bold mb-6 text-center text-blue-700">TU PEDIDO</h2>
+        <div class="border rounded-xl mb-6 bg-white">
+          <div class="flex justify-between bg-blue-100 px-6 py-3 font-semibold rounded-t-xl">
+            <span>PRODUCTO</span>
+            <span>SUBTOTAL</span>
+          </div>
+          <div id="product-list" class="px-6 py-3">
+            <!-- Productos se llenan por Flask o JS -->
+          </div>
+          <div class="px-6 py-3 border-t">
+            <div class="flex justify-between">
+              <span>Subtotal</span>
+              <span id="subtotal">S/0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Descuento</span>
+              <span id="descuento">-S/ 0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Envío</span>
+              <span id="envio">S/ 0.00</span>
+            </div>
+            <div class="flex justify-between font-bold text-lg mt-2">
+              <span>TOTAL</span>
+              <span id="total">S/0.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-3 mb-6">
+          <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-blue-100 transition">
+            <input type="radio" name="payment-option" value="credit-card" checked class="accent-blue-500" />
+            <span>Tarjeta de crédito/débito</span>
+            <img src="/static/img/paypal.png" class="h-7 w-auto object-contain" alt="Paypal" />
+            <img src="/static/img/stripe.png" class="h-7 w-auto object-contain" alt="Stripe" />
+          </label>
+          <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-blue-100 transition">
+            <input type="radio" name="payment-option" value="bank-transfer" class="accent-blue-500" />
+            <span>Transferencia bancaria</span>
+            <img src="/static/img/bcp.png" class="h-7 w-auto object-contain" alt="BCP" />
+          </label>
+          <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-blue-100 transition">
+            <input type="radio" name="payment-option" value="yape" class="accent-blue-500" />
+            <span>Pago con Yape</span>
+            <img src="/static/img/yape.png" class="h-7 w-auto object-contain" alt="Yape" />
+          </label>
+        </div>
+        <div class="text-xs text-gray-500 mb-3">
+          Sus datos personales se utilizarán para tramitar su experiencia en este sitio web, para administrar el acceso a su cuenta y para otros fines descritos en nuestra política de privacidad.
+        </div>
+        <div class="flex items-start gap-2 mb-6">
+          <input type="checkbox" id="terms" class="mt-1 accent-blue-500" />
+          <label for="terms" class="text-sm">He leído y estoy de acuerdo con los términos y condiciones de la web</label>
+        </div>
+        <button id="place-order" class="w-full py-4 bg-blue-600 text-white font-bold rounded-xl text-lg shadow-lg hover:bg-blue-700 transition">REALIZAR PEDIDO</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modales secundarios -->
+  <div id="yape-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative border-2 border-blue-100 flex flex-col items-center">
+      <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold close-yape transition">&times;</button>
+      <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">Paga con Yape</h2>
+      <div class="flex flex-col items-center w-full">
+        <div id="yape-qr" class="mb-6 w-48 h-48 flex items-center justify-center bg-blue-50 border-2 border-blue-200 rounded-xl shadow-inner"></div>
+        <div class="mb-4 w-full flex flex-col items-center">
+          <div class="font-semibold text-lg text-blue-700">Número:</div>
+          <div class="text-xl font-bold bg-blue-100 text-blue-900 rounded-lg px-4 py-2 mb-2" id="yape-number">999-888-777</div>
+          <div class="font-semibold text-lg text-blue-700">Monto:</div>
+          <div class="text-xl font-bold bg-blue-100 text-blue-900 rounded-lg px-4 py-2" id="yape-amount">S/0.00</div>
+        </div>
+        <label class="block w-full mb-2 text-center font-semibold text-blue-700">Sube tu captura de pago</label>
+        <input type="file" id="payment-screenshot" accept="image/*" class="mb-4 w-full border-2 border-blue-200 rounded-lg px-3 py-2" />
+        <div id="image-preview" class="mb-4"></div>
+        <button id="yape-confirm" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition mt-2">He realizado el pago</button>
+      </div>
+    </div>
+  </div>
+  <div id="receipt-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative">
+      <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold close-receipt">&times;</button>
+      <h2 class="text-xl font-bold mb-4 text-center">RECIBO</h2>
+      <div class="mb-2 text-center">
+        <span class="font-semibold">N° Pedido:</span> <span id="receipt-order-number">0000</span> | <span id="receipt-date">Fecha</span>
+      </div>
+      <div class="mb-2 text-center">
+        <span class="font-semibold">Email:</span> <span id="receipt-email">admin@gmail.com</span>
+      </div>
+      <div class="mb-2 text-center">
+        <span class="font-semibold">Total:</span> <span id="receipt-total">S/0.00</span>
+      </div>
+      <div class="mb-2 text-center">
+        <span class="font-semibold">Método de pago:</span> <span id="receipt-payment-method">Pago Off Yape</span>
+      </div>
+      <div class="border-t pt-4 mt-4">
+        <div class="mb-2"><span class="font-semibold">Productos:</span> <span id="receipt-product-name"></span></div>
+        <div class="mb-2"><span class="font-semibold">Subtotal:</span> <span id="receipt-subtotal">S/0.00</span></div>
+        <div class="mb-2"><span class="font-semibold">Descuento:</span> <span id="receipt-descuento">-S/0.00</span></div>
+        <div class="mb-2"><span class="font-semibold">Envío:</span> <span id="receipt-envio">S/0.00</span></div>
+        <div class="mb-2"><span class="font-semibold">Total:</span> <span id="receipt-total-detail">S/0.00</span></div>
+        <div class="mb-2"><span class="font-semibold">Dirección:</span> <span id="receipt-billing-address"></span></div>
+        <div class="mb-2"><span class="font-semibold">Teléfono:</span> <span id="receipt-phone"></span></div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button id="print-receipt" class="flex-1 py-2 bg-blue-600 text-white rounded font-bold">Imprimir</button>
+        <button class="flex-1 py-2 bg-gray-200 text-gray-700 rounded font-bold close-receipt">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div> 

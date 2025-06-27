@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<!-- Hero Carrusel de 3 slides ancho completo -->
+<div class="relative w-full overflow-hidden" style="min-height: 380px;">
+    <div id="heroCarouselInner" class="flex transition-transform duration-700" style="transform: translateX(0%)">
+        <!-- Slide 1 -->
+        <div class="min-w-full h-[380px] md:h-[420px] flex items-center justify-end bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='img/producto_destacado.png') }}');">
+            <div class="bg-white/80 md:bg-white/70 rounded-xl p-8 md:p-12 m-4 md:mr-24 max-w-xl text-right shadow-xl">
+                <span class="inline-block bg-black text-white text-xs px-3 py-1 rounded mb-2">NUEVO</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-2">2x1 <span class="font-bold text-gray-800">EN MAQUILLAJE<br>Y PERFUMES</span></h2>
+                <div class="mb-3">
+                    <span class="inline-block bg-black text-white text-sm px-4 py-1 rounded-full font-bold">CUPÓN</span>
+                    <span class="inline-block bg-red-500 text-white text-sm px-4 py-1 rounded-full font-bold ml-2">LOOK2X1</span>
+                </div>
+                <a href="/tienda" class="inline-block bg-black text-white text-lg px-8 py-2 rounded shadow hover:bg-gray-800 transition mb-2">Comprar aquí</a>
+                <p class="text-xs text-gray-500 mt-2 hidden md:block">Válido del 23/06/2025 al 29/06/2025. No acumulable con otras promociones. Stock mínimo 20 cupones. ...</p>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="min-w-full h-[380px] md:h-[420px] flex items-center justify-end bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='img/categoria_maquillaje.png') }}');">
+            <div class="bg-white/80 md:bg-white/70 rounded-xl p-8 md:p-12 m-4 md:mr-24 max-w-xl text-right shadow-xl">
+                <span class="inline-block bg-pink-600 text-white text-xs px-3 py-1 rounded mb-2">MAQUILLAJE</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-2">¡Nuevas paletas y labiales!</h2>
+                <p class="mb-3 text-gray-700">Colores intensos y de larga duración para tu look diario.</p>
+                <a href="/categoria/maquillaje" class="inline-block bg-pink-600 text-white text-lg px-8 py-2 rounded shadow hover:bg-pink-700 transition">Ver colección</a>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="min-w-full h-[380px] md:h-[420px] flex items-center justify-end bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='img/categoria_cuidado.png') }}');">
+            <div class="bg-white/80 md:bg-white/70 rounded-xl p-8 md:p-12 m-4 md:mr-24 max-w-xl text-right shadow-xl">
+                <span class="inline-block bg-yellow-500 text-white text-xs px-3 py-1 rounded mb-2">CUIDADO</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-2">Rutina facial<br>con descuento</h2>
+                <p class="mb-3 text-gray-700">Limpia, hidrata y protege tu piel con nuestros sets especiales.</p>
+                <a href="/categoria/sets" class="inline-block bg-yellow-500 text-white text-lg px-8 py-2 rounded shadow hover:bg-yellow-600 transition">Ver sets</a>
+            </div>
+        </div>
+    </div>
+    <!-- Flechas -->
+    <button id="heroCarouselPrev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/80 hover:bg-green-100 text-gray-700 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition-all">
+        <i class="fas fa-chevron-left text-3xl"></i>
+    </button>
+    <button id="heroCarouselNext" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/80 hover:bg-green-100 text-gray-700 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition-all">
+        <i class="fas fa-chevron-right text-3xl"></i>
+    </button>
+    <!-- Indicadores -->
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-4 flex space-x-2 z-20">
+        <button class="w-8 h-1 rounded bg-red-500 transition-all" id="heroDot0"></button>
+        <button class="w-8 h-1 rounded bg-gray-300 transition-all" id="heroDot1"></button>
+        <button class="w-8 h-1 rounded bg-gray-300 transition-all" id="heroDot2"></button>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-12">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-green-500 mb-2">Bienvenida a bycint Cosméticos</h1>
+        <p class="text-lg text-gray-700 mb-6">Descubre productos de belleza, cuidado de la piel y accesorios seleccionados especialmente para ti.</p>
+        <a href="/tienda" class="inline-block bg-green-500 text-white px-6 py-2 rounded shadow hover:bg-green-600 transition">Explorar tienda</a>
+    </div>
+    <div class="relative">
+        {% set productos = productos_destacados %}
+        {% set titulo = 'Productos Destacados' %}
+        {% include 'componentes_carrusel_productos.html' %}
+    </div>
+</div>
+<!-- Sección de suscripción a la comunidad -->
+<div class="container mx-auto px-4 mb-12">
+    <div class="bg-orange-500 rounded-xl py-8 px-4 md:px-12 text-center text-white shadow-lg max-w-4xl mx-auto">
+        <h2 class="font-bold text-lg md:text-xl mb-2 uppercase tracking-wide">Únete a nuestra comunidad</h2>
+        <p class="mb-4 text-sm md:text-base text-white">Suscríbete para recibir las últimas noticias, ofertas exclusivas y consejos de belleza.</p>
+        <form action="{{ url_for('suscribirse') }}" method="POST" class="flex flex-col md:flex-row justify-center items-center gap-3 max-w-xl mx-auto mb-2">
+            <input type="email" name="correo" placeholder="Ingresar correo electrónico" required class="flex-1 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300 border border-gray-200">
+            <button type="submit" class="bg-black text-white font-semibold px-6 py-2 rounded-full hover:bg-gray-900 transition">Suscribirme</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mt-2 max-w-md mx-auto">
+                    {% for category, message in messages %}
+                        <div class="mb-2 p-3 rounded text-sm {% if category == 'success' %}bg-green-100 text-green-800 border border-green-300{% elif category == 'error' %}bg-red-100 text-red-800 border border-red-300{% else %}bg-yellow-100 text-yellow-800 border border-yellow-300{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Hero Carrusel
+    const heroCarouselInner = document.getElementById('heroCarouselInner');
+    const heroPrevBtn = document.getElementById('heroCarouselPrev');
+    const heroNextBtn = document.getElementById('heroCarouselNext');
+    const heroDots = [
+        document.getElementById('heroDot0'),
+        document.getElementById('heroDot1'),
+        document.getElementById('heroDot2')
+    ];
+    let heroCurrent = 0;
+    const heroTotal = 3;
+
+    function updateHeroCarousel() {
+        heroCarouselInner.style.transform = `translateX(-${heroCurrent * 100}%)`;
+        heroDots.forEach((dot, i) => {
+            dot.classList.toggle('bg-red-500', i === heroCurrent);
+            dot.classList.toggle('bg-gray-300', i !== heroCurrent);
+        });
+    }
+    heroPrevBtn.addEventListener('click', () => {
+        heroCurrent = (heroCurrent - 1 + heroTotal) % heroTotal;
+        updateHeroCarousel();
+    });
+    heroNextBtn.addEventListener('click', () => {
+        heroCurrent = (heroCurrent + 1) % heroTotal;
+        updateHeroCarousel();
+    });
+    heroDots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            heroCurrent = i;
+            updateHeroCarousel();
+        });
+    });
+    // Opcional: autoplay
+    setInterval(() => {
+        heroCurrent = (heroCurrent + 1) % heroTotal;
+        updateHeroCarousel();
+    }, 7000);
+
+    // Swiper para productos destacados
+    new Swiper('.productosSwiper', {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: '.productos-swiper-btn.swiper-button-next',
+            prevEl: '.productos-swiper-btn.swiper-button-prev',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            640: { slidesPerView: 3 },
+            1024: { slidesPerView: 5 },
+        },
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}bycint Cosméticos{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-papm6Q+K6lJzi10BGSAdoo6gWQBaIj++ImQxGc1dQc5sKXc5teLoI0lp4rWuIwoMvV7lidh+NangNh4pW7x1Yw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/plantilla/plantilla.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <!-- Barra superior -->
+    <div class="bg-gray-900 text-gray-100 text-sm py-2 px-4 flex justify-between items-center">
+        <div>
+            <i class="fas fa-envelope mr-2"></i> mail@bycint.com
+            <span class="mx-4">|</span>
+            <i class="fas fa-phone mr-2"></i> 010-420-0340
+        </div>
+        <div class="space-x-3">
+            <a href="#" class="hover:text-green-400"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="hover:text-green-400"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="hover:text-green-400"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+    <!-- Header y navegación -->
+    <header class="bg-white shadow">
+        <div class="container mx-auto flex flex-wrap md:flex-nowrap justify-between items-center py-4 px-4 gap-2">
+            <a href="/" class="text-3xl font-bold text-green-500 whitespace-nowrap">byCint</a>
+            <nav class="space-x-8 text-lg flex flex-wrap items-center justify-center flex-1 min-w-0">
+                <a href="/" class="hover:text-green-500">Inicio</a>
+                <a href="/nosotros" class="hover:text-green-500">Nosotros</a>
+                <a href="/tienda" class="hover:text-green-500">Tienda</a>
+                <a href="/contacto" class="hover:text-green-500">Contacto</a>
+                <a href="/comunidad" class="hover:text-green-500">Comunidad</a>
+            </nav>
+            <form action="{{ url_for('buscar') }}" method="get" class="flex items-center w-full max-w-xs md:max-w-md lg:max-w-lg mx-2 order-3 md:order-none mt-2 md:mt-0">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="q" placeholder="Buscar productos..." class="w-full pl-10 pr-3 py-2 rounded-full border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all shadow-sm focus:shadow-lg text-sm" required>
+                </div>
+                <button type="submit" class="ml-2 px-4 py-2 rounded-full bg-green-500 text-white font-semibold hover:bg-green-600 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                    Buscar
+                </button>
+            </form>
+            <div class="flex items-center space-x-4 min-w-fit">
+                {% if session.get('user_id') %}
+                    <div class="relative group flex items-center gap-x-4">
+                        <span class="font-medium">{{ session.get('user_name', 'Usuario') }}</span>
+                        <div class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center bg-white">
+                            <i class="fas fa-user text-gray-400 text-xl"></i>
+                        </div>
+                        <!-- Carrito separado y alineado -->
+                        <div class="relative ml-6" id="cart-container" style="z-index:51;">
+                            <a href="{{ url_for('carrito') }}" class="relative hover:text-green-500 px-4 py-2 bg-green-100 rounded font-semibold" id="cart-icon-link">
+                                Carrito
+                                <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+                            </a>
+                            <div id="mini-cart" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50 p-4 transition-all">
+                                <h4 class="font-bold text-lg mb-3">Mi carrito</h4>
+                                <div id="mini-cart-list" class="max-h-60 overflow-y-auto"></div>
+                                <div class="flex justify-between items-center mt-4 mb-2">
+                                    <span class="font-semibold">Total:</span>
+                                    <span id="mini-cart-total" class="font-bold text-green-600">S/ 0.00</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="/carrito" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded text-center font-semibold hover:bg-gray-300 transition">Ver carrito</a>
+                                    <a href="#" id="mini-cart-pagar" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-center font-semibold hover:bg-green-700 transition">Ir a pagar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="flex items-center cursor-pointer select-none">
+                            <i class="fas fa-chevron-down text-xs ml-2 transition-transform duration-200 group-hover:rotate-180"></i>
+                        </span>
+                        <!-- Submenú desplegable -->
+                        <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-30">
+                            <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Perfil</a>
+                            <a href="/mis-pedidos" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Mis pedidos</a>
+                            <form action="/logout" method="post" class="m-0">
+                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">Cerrar sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="px-4 py-2 rounded border border-green-500 text-green-600 bg-white hover:bg-green-50 hover:text-green-700 font-semibold transition">Iniciar Sesión</a>
+                    <a href="{{ url_for('register') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-semibold transition ml-2">Registrarse</a>
+                    <div class="relative ml-8" style="z-index:51;">
+                        <a href="{{ url_for('carrito') }}" class="relative hover:text-green-500 px-4 py-2 bg-green-100 rounded font-semibold" id="cart-icon-link">
+                            Carrito
+                            <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+                        </a>
+                        <div id="mini-cart" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50 p-4 transition-all">
+                            <h4 class="font-bold text-lg mb-3">Mi carrito</h4>
+                            <div id="mini-cart-list" class="max-h-60 overflow-y-auto"></div>
+                            <div class="flex justify-between items-center mt-4 mb-2">
+                                <span class="font-semibold">Total:</span>
+                                <span id="mini-cart-total" class="font-bold text-green-600">S/ 0.00</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="/carrito" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded text-center font-semibold hover:bg-gray-300 transition">Ver carrito</a>
+                                <a href="#" id="mini-cart-pagar" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-center font-semibold hover:bg-green-700 transition">Ir a pagar</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <!-- Menú de categorías principal -->
+    <nav class="bg-green-50 border-b border-green-200 shadow-sm">
+        <div class="container mx-auto px-4">
+            <ul class="flex flex-wrap justify-center gap-2 md:gap-6 py-2 text-base font-medium">
+                <!-- Marcas -->
+                <li class="relative group">
+                    <a href="#" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center">
+                        Marcas
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20">
+                        <li><a href="/marca/jabila" class="block px-4 py-2 hover:bg-green-100">JABILA</a></li>
+                        <li><a href="/marca/pandora" class="block px-4 py-2 hover:bg-green-100">PANDORA</a></li>
+                        <li><a href="/marca/flower-secret" class="block px-4 py-2 hover:bg-green-100">FLOWER SECRET</a></li>
+                        <li><a href="/marca/gevl" class="block px-4 py-2 hover:bg-green-100">GEVL</a></li>
+                        <li><a href="/marca/ybel" class="block px-4 py-2 hover:bg-green-100">YBEL</a></li>
+                    </ul>
+                </li>
+                <!-- Sets -->
+                <li class="relative group">
+                    <a href="/categoria/sets" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                        Sets
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                        <li><a href="/categoria/sets?tipo=Sets%20de%20Maquillaje" class="block px-4 py-2 hover:bg-green-100">Sets de Maquillaje</a></li>
+                        <li><a href="/categoria/sets?tipo=Sets%20de%20Cuidado" class="block px-4 py-2 hover:bg-green-100">Sets de Cuidado</a></li>
+                        <li><a href="/categoria/sets?tipo=Sets%20de%20Brochas" class="block px-4 py-2 hover:bg-green-100">Sets de Brochas</a></li>
+                    </ul>
+                </li>
+                <!-- Maquillaje -->
+                <li class="relative group">
+                    <a href="/categoria/maquillaje" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                        Maquillaje
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                        <li><a href="/categoria/maquillaje?tipo=Bases" class="block px-4 py-2 hover:bg-green-100">Bases</a></li>
+                        <li><a href="/categoria/maquillaje?tipo=Sombras" class="block px-4 py-2 hover:bg-green-100">Sombras</a></li>
+                        <li><a href="/categoria/maquillaje?tipo=Rubores" class="block px-4 py-2 hover:bg-green-100">Rubores</a></li>
+                        <li><a href="/categoria/maquillaje?tipo=Delineadores" class="block px-4 py-2 hover:bg-green-100">Delineadores</a></li>
+                    </ul>
+                </li>
+                <!-- Joyería -->
+                <li class="relative group">
+                    <a href="/categoria/joyeria" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                        Joyería
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                        <li><a href="/categoria/joyeria?tipo=Collares" class="block px-4 py-2 hover:bg-green-100">Collares</a></li>
+                        <li><a href="/categoria/joyeria?tipo=Pulseras" class="block px-4 py-2 hover:bg-green-100">Pulseras</a></li>
+                        <li><a href="/categoria/joyeria?tipo=Anillos" class="block px-4 py-2 hover:bg-green-100">Anillos</a></li>
+                        <li><a href="/categoria/joyeria?tipo=Aretes" class="block px-4 py-2 hover:bg-green-100">Aretes</a></li>
+                    </ul>
+                </li>
+                <!-- Perfumes -->
+                <li class="relative group">
+                    <a href="/categoria/perfume" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                        Perfumes
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                        <li><a href="/categoria/perfume?genero=Mujer" class="block px-4 py-2 hover:bg-green-100">Mujer</a></li>
+                        <li><a href="/categoria/perfume?genero=Hombre" class="block px-4 py-2 hover:bg-green-100">Hombre</a></li>
+                        <li><a href="/categoria/perfume?genero=Unisex" class="block px-4 py-2 hover:bg-green-100">Unisex</a></li>
+                    </ul>
+                </li>
+                <!-- Pintalabios -->
+                <li class="relative group">
+                    <a href="/categoria/pintalabios" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                        Pintalabios
+                        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                        <li><a href="/categoria/pintalabios?tipo=Líquidos" class="block px-4 py-2 hover:bg-green-100">Líquidos</a></li>
+                        <li><a href="/categoria/pintalabios?tipo=Barra" class="block px-4 py-2 hover:bg-green-100">Barra</a></li>
+                        <li><a href="/categoria/pintalabios?tipo=Gloss" class="block px-4 py-2 hover:bg-green-100">Gloss</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gradient-to-tr from-green-900 via-green-700 to-green-500 text-gray-100 pt-10 pb-4 mt-auto border-t border-green-300 shadow-lg">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-10 md:gap-4">
+          <!-- Columna 1: Marcas y Legal -->
+          <div class="flex-1 flex flex-col md:flex-row gap-10">
+            <div>
+              <h4 class="font-bold text-lg mb-3 tracking-wide">MARCAS</h4>
+              <ul class="space-y-1 text-sm">
+                <li><a href="/marca/jabila" class="hover:underline">JABILA</a></li>
+                <li><a href="/marca/pandora" class="hover:underline">PANDORA</a></li>
+                <li><a href="/marca/flower-secret" class="hover:underline">FLOWER SECRET</a></li>
+                <li><a href="/marca/gevl" class="hover:underline">GEVL</a></li>
+                <li><a href="/marca/ybel" class="hover:underline">YBEL</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg mb-3 tracking-wide">LEGAL</h4>
+              <ul class="space-y-1 text-sm">
+                <li><a href="/legal/privacidad" class="hover:underline">Política de privacidad</a></li>
+                <li><a href="/legal/terminos" class="hover:underline">Términos y condiciones</a></li>
+                <li><a href="/legal/envios" class="hover:underline">Envíos y reclamaciones</a></li>
+                <li><a href="/legal/cambios" class="hover:underline">Política de cambios y devoluciones</a></li>
+              </ul>
+            </div>
+        </div>
+          <!-- Columna 2: Contacto y Redes -->
+          <div class="flex-1 flex flex-col md:flex-row gap-10">
+            <div>
+              <h4 class="font-bold text-lg mb-3 tracking-wide">CONTACTO</h4>
+              <ul class="space-y-1 text-sm">
+                <li><a href="/contacto" class="hover:underline">Escríbenos</a></li>
+                <li><a href="#" class="hover:underline">Cómo comprar</a></li>
+                <li><a href="/tienda" class="hover:underline">Nuestra tienda</a></li>
+              </ul>
+                </div>
+            <div>
+              <h4 class="font-bold text-lg mb-3 tracking-wide">REDES SOCIALES</h4>
+              <div class="flex space-x-4 text-2xl mb-2">
+                <a href="#" class="hover:text-pink-300 transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-pink-300 transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-pink-300 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-pink-300 transition"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="hover:text-pink-300 transition"><i class="fab fa-whatsapp"></i></a>
+                </div>
+              <h5 class="font-semibold text-sm mt-2 mb-1">BANCOS CON LOS QUE OPERAMOS:</h5>
+              <div class="flex space-x-3 mt-1">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-7 bg-white rounded p-1 shadow"/>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-7 bg-white rounded p-1 shadow"/>
+                <img src="/static/img/paypal.png" alt="Paypal" class="h-7 bg-white rounded p-1 shadow"/>
+                <img src="/static/img/yape.png" alt="Stripe" class="h-7 bg-white rounded p-1 shadow"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Línea divisoria -->
+        <div class="border-t border-green-300 my-6"></div>
+        <!-- Servicios destacados -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-sm">
+          <div class="flex flex-col items-center">
+            <span class="text-2xl mb-1"><i class="fas fa-truck"></i></span>
+            <span class="font-semibold">ENTREGA POR TODO SAN VICENTE DE CAÑETE</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-2xl mb-1"><i class="fas fa-lock"></i></span>
+            <span class="font-semibold">PAGOS 100% SEGUROS</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-2xl mb-1"><i class="fas fa-star"></i></span>
+            <span class="font-semibold">PRODUCTOS DE CALIDAD</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-2xl mb-1"><i class="fas fa-user-headset"></i></span>
+            <span class="font-semibold">ATENCIÓN AL CLIENTE</span>
+          </div>
+        </div>
+        <!-- Frase y derechos -->
+        <div class="mt-8 text-center">
+          <div class="text-base font-semibold mb-1 tracking-wide">SOMOS UN EMPRENDIMIENTO</div>
+          <div class="italic text-sm text-green-100 mb-2">"Realza tu belleza de adentro hacia afuera con productos que cuidan tu piel y resalten lo mejor de ti."</div>
+          <div class="text-xs text-green-100">&copy; {{ 2024 }} bycint Cosméticos. Todos los derechos reservados.</div>
+        </div>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    {% include 'pago_modal.html' %}
+    <script>
+        window.products = {{ products|tojson }};
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

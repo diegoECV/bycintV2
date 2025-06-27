@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Tienda - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+  <h1 class="text-4xl font-extrabold text-green-500 mb-8 text-center uppercase tracking-wide">Tienda</h1>
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Filtros laterales -->
+    <aside class="w-full lg:w-64 mb-6 lg:mb-0">
+      <form id="filtros-tienda" class="space-y-6 bg-white rounded-xl shadow p-6">
+        <div>
+          <label class="block font-semibold mb-2">Categorías</label>
+          <div class="space-y-1 ml-2">
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Sets"> Sets</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Maquillaje"> Maquillaje</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Perfume"> Perfume</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Joyería"> Joyería</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Pintalabios"> Pintalabios</label>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-2">Ofertas y Novedades</label>
+          <div class="space-y-1 ml-2">
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="oferta" value="1"> Ofertas</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="novedad" value="1"> Novedades</label>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-2">Rango de precio</label>
+          <div class="flex items-center gap-2">
+            <input type="range" name="precio" min="{{ filtro_precio.min }}" max="{{ filtro_precio.max }}" value="{{ filtro_precio.max }}" class="w-full accent-red-500" id="precio-slider">
+          </div>
+          <div class="flex justify-between text-xs mt-1">
+            <span>S/ <span id="precio-min">{{ filtro_precio.min }}</span></span>
+            <span>S/ <span id="precio-max">{{ filtro_precio.max }}</span></span>
+          </div>
+        </div>
+      </form>
+    </aside>
+    <!-- Contenido principal -->
+    <section class="flex-1">
+      <div class="flex items-center justify-between mb-6">
+        <span id="contador-productos" class="text-sm font-semibold text-gray-700"></span>
+        <div class="relative">
+          <button id="ordenar-btn" class="flex items-center gap-2 text-sm font-semibold text-gray-700 border px-3 py-1 rounded hover:bg-gray-100">
+            Ordenar por <span id="orden-actual" class="ml-1 font-bold">Relevancia</span>
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="ordenar-menu" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10 hidden">
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm orden-opcion" data-orden="relevancia">Relevancia</button>
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm orden-opcion" data-orden="fecha">Fecha de release</button>
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm orden-opcion" data-orden="descuento">Descuento</button>
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm orden-opcion" data-orden="mayor">Precio: mayor a menor</button>
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm orden-opcion" data-orden="menor">Precio: menor a mayor</button>
+          </div>
+        </div>
+      </div>
+      <div id="productos-lista" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+      <div class="flex justify-center mt-10">
+        <div id="paginacion"></div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/tienda.js') }}"></script>
+{% endblock %} 

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<!-- Este archivo se usará como fragmento para renderizar productos -->
+<div id="maquillaje" class="mb-12">
+  <h2 class="text-2xl font-bold mb-6 text-pink-600">Maquillaje</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    {% for prod in productos if prod.categoria == 'maquillaje' %}
+    <div class="relative bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center group transition-transform hover:-translate-y-1 hover:shadow-2xl">
+      {% if prod.descuento %}
+      <span class="absolute left-4 top-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ prod.descuento }}%</span>
+      {% endif %}
+      <!-- Favorito -->
+      <button class="absolute right-4 top-4 text-gray-300 hover:text-red-500 text-xl transition"><i class="fa-regular fa-heart"></i></button>
+      <!-- Imagen -->
+      <a href="/producto/{{ prod.id }}">
+        <img src="{{ url_for('static', filename='img/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="w-32 h-32 object-contain mb-4 rounded-lg shadow cursor-pointer transition-transform hover:scale-105">
+      </a>
+      <!-- Nombre -->
+      <h3 class="text-base font-bold text-center mb-1">{{ prod.nombre }}</h3>
+      <!-- Precios -->
+      <div class="flex items-center gap-2 mb-3">
+        {% if prod.precio_original %}
+        <span class="text-gray-400 line-through text-sm">S/ {{ '%.2f' % prod.precio_original }}</span>
+        {% endif %}
+        <span class="text-black font-bold text-lg">S/ {{ '%.2f' % prod.precio }}</span>
+      </div>
+      <!-- Botón agregar -->
+      <button class="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded-lg font-bold text-base mt-auto hover:bg-green-700 transition shadow btn-add-cart" data-id="{{ prod.id }}">
+        <i class="fa-solid fa-cart-plus"></i> Agregar
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div id="cuidado" class="mb-12">
+  <h2 class="text-2xl font-bold mb-6 text-yellow-500">Cuidado</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    {% for prod in productos if prod.categoria == 'cuidado' %}
+    <div class="relative bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center group transition-transform hover:-translate-y-1 hover:shadow-2xl">
+      {% if prod.descuento %}
+      <span class="absolute left-4 top-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ prod.descuento }}%</span>
+      {% endif %}
+      <button class="absolute right-4 top-4 text-gray-300 hover:text-red-500 text-xl transition"><i class="fa-regular fa-heart"></i></button>
+      <a href="/producto/{{ prod.id }}">
+        <img src="{{ url_for('static', filename='img/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="w-32 h-32 object-contain mb-4 rounded-lg shadow cursor-pointer transition-transform hover:scale-105">
+      </a>
+      <h3 class="text-base font-bold text-center mb-1">{{ prod.nombre }}</h3>
+      <div class="flex items-center gap-2 mb-3">
+        {% if prod.precio_original %}
+        <span class="text-gray-400 line-through text-sm">S/ {{ '%.2f' % prod.precio_original }}</span>
+        {% endif %}
+        <span class="text-black font-bold text-lg">S/ {{ '%.2f' % prod.precio }}</span>
+      </div>
+      <button class="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded-lg font-bold text-base mt-auto hover:bg-green-700 transition shadow btn-add-cart" data-id="{{ prod.id }}">
+        <i class="fa-solid fa-cart-plus"></i> Agregar
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="flex justify-center mt-10">
+  <div id="paginacion"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/catalogo_categoria.js') }}"></script>
+{% endblock %} 

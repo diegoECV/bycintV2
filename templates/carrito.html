@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Carrito principal -->
+        <div class="flex-1 bg-white rounded-xl shadow p-8">
+            <h1 class="text-3xl font-bold mb-6">Carrito</h1>
+            <table class="w-full text-left mb-6">
+                <thead>
+                    <tr class="border-b">
+                        <th class="py-2 font-semibold">Producto</th>
+                        <th class="py-2 font-semibold">Precio</th>
+                        <th class="py-2 font-semibold">Cantidad</th>
+                        <th class="py-2 font-semibold">Total</th>
+                        <th class="py-2 font-semibold"></th>
+                    </tr>
+                </thead>
+                <tbody id="carrito-table-body">
+                    {% for prod in productos %}
+                    <tr>
+                        <td class="py-2 flex items-center gap-3">
+                            <img src="{{ url_for('static', filename='img/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="w-12 h-12 object-contain rounded shadow">
+                            <span class="font-semibold">{{ prod.nombre }}</span>
+                        </td>
+                        <td class="py-2">S/ {{ '%.2f' % prod.precio }}</td>
+                        <td class="py-2">
+                            <div class="flex items-center gap-2">
+                                <button class="btn-menos-cantidad px-2 py-1 rounded bg-gray-200 text-lg font-bold" data-id="{{ prod.id }}">-</button>
+                                <input type="number" class="input-cantidad-carrito w-12 text-center border rounded" value="{{ prod.cantidad }}" min="1" data-id="{{ prod.id }}">
+                                <button class="btn-mas-cantidad px-2 py-1 rounded bg-gray-200 text-lg font-bold" data-id="{{ prod.id }}">+</button>
+                            </div>
+                        </td>
+                        <td class="py-2 font-bold">S/ {{ '%.2f' % (prod.precio * prod.cantidad) }}</td>
+                        <td class="py-2 text-center">
+                            <button class="btn-remove-cart text-red-600 hover:text-red-800" data-id="{{ prod.id }}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-gray-500">Tu carrito está vacío</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="my-6">
+                <div class="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-5 font-bold text-lg shadow">
+                    ENVÍO GRATIS EN TODAS TUS COMPRAS
+                    <div class="text-xs font-normal mt-1">Por compras de S/ 100 a más</div>
+                </div>
+            </div>
+            <hr class="my-6">
+            <div>
+                <h2 class="font-bold text-lg mb-2">Entrega</h2>
+                <p class="text-sm text-gray-600 mb-3">Vea las opciones de envío para sus productos, incluyendo los plazos y los precios de envío.</p>
+                <button class="px-5 py-2 border border-black rounded font-semibold hover:bg-gray-100 transition">Calcular</button>
+            </div>
+        </div>
+        <!-- Resumen -->
+        <div class="w-full lg:w-96 bg-white rounded-xl shadow p-6 h-fit">
+            <div class="bg-cyan-400 text-white text-center rounded-lg py-4 font-semibold mb-4">
+                ¡APROVECHA LAS MEJORES OFERTAS!<br>
+                <span class="text-xs font-normal">70% de descuento en sets seleccionados<br>¡Solo por tiempo limitado!</span>
+            </div>
+            <div class="text-sm text-gray-600 text-center mb-4">Solo S/ 100.00 más para envío gratis</div>
+            <hr class="mb-4">
+            <div class="mb-4">
+                <label class="flex items-center gap-2 font-semibold text-sm mb-2">
+                    <i class="fa-solid fa-percent text-blue-600"></i>
+                    Añade tu cupón de descuento
+                </label>
+                <div class="flex gap-2">
+                    <input id="input-cupon" type="text" class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-200" placeholder="Código de cupón">
+                    <button id="btn-aplicar-cupon" class="bg-black text-white px-5 py-2 rounded hover:bg-gray-800 transition">Aplicar</button>
+                </div>
+            </div>
+            <div class="flex justify-between text-sm mb-2">
+                <span>Subtotal</span>
+                <span id="carrito-subtotal">S/ 0.00</span>
+            </div>
+            <div class="flex justify-between text-sm mb-2">
+                <span>Descuento</span>
+                <span id="carrito-descuento">-S/ 0.00</span>
+            </div>
+            <div class="flex justify-between items-center text-lg font-bold mb-4">
+                <span>Total</span>
+                <span id="carrito-total">S/ 0.00</span>
+            </div>
+            <button id="open-payment-modal" class="w-full bg-black text-white py-3 rounded-lg font-bold text-lg mb-3 hover:bg-gray-800 transition">Ir a pagar</button>
+            <a href="/tienda" class="w-full block border-2 border-black text-black py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition text-center">Seguir comprando</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/catalogo_categoria.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pago.js') }}"></script>
+{% endblock %} 
