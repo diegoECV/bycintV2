@@ -28,6 +28,8 @@ function fetchAndRenderProductosCategoria() {
   params.append('orden', document.getElementById('ordenar-categoria').value);
   params.append('categoria', form.getAttribute('data-categoria'));
 
+  showLoaderCategoria();
+
   fetch('/api/productos_categoria?' + params.toString())
     .then(res => res.json())
     .then(data => {
@@ -42,6 +44,11 @@ function fetchAndRenderProductosCategoria() {
       const contador = document.getElementById('contador-productos');
       if (contador) contador.textContent = '0 productos';
     });
+}
+
+function showLoaderCategoria() {
+  const cont = document.getElementById('productos-categoria-lista');
+  if (cont) cont.innerHTML = '<div class="text-center w-full py-12"><span class="loader"></span> Cargando productos...</div>';
 }
 
 function renderProductosCategoria(productos) {

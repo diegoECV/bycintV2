@@ -1,0 +1,83 @@
+<footer class="bg-gradient-to-tr from-red-900 via-red-700 to-red-500 text-gray-100 pt-10 pb-4 mt-auto border-t border-red-300 shadow-lg">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-10 md:gap-4">
+      <!-- Columna 1: Marcas y Legal -->
+      <div class="flex-1 flex flex-col md:flex-row gap-10">
+        <div>
+          <h4 class="font-bold text-lg mb-3 tracking-wide">MARCAS</h4>
+          <ul class="space-y-1 text-sm">
+            <li><a href="/marca/jabila" class="hover:underline">JABILA</a></li>
+            <li><a href="/marca/pandora" class="hover:underline">PANDORA</a></li>
+            <li><a href="/marca/flower-secret" class="hover:underline">FLOWER SECRET</a></li>
+            <li><a href="/marca/gevl" class="hover:underline">GEVL</a></li>
+            <li><a href="/marca/ybel" class="hover:underline">YBEL</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-3 tracking-wide">LEGAL</h4>
+          <ul class="space-y-1 text-sm">
+            <li><a href="/legal/privacidad" class="hover:underline">Política de privacidad</a></li>
+            <li><a href="/legal/terminos" class="hover:underline">Términos y condiciones</a></li>
+            <li><a href="/legal/envios" class="hover:underline">Envíos y reclamaciones</a></li>
+            <li><a href="/legal/cambios" class="hover:underline">Política de cambios y devoluciones</a></li>
+          </ul>
+      </div>
+    </div>
+      <!-- Columna 2: Contacto y Redes -->
+      <div class="flex-1 flex flex-col md:flex-row gap-10">
+        <div>
+          <h4 class="font-bold text-lg mb-3 tracking-wide">CONTACTO</h4>
+          <ul class="space-y-1 text-sm">
+            <li><a href="/contacto" class="hover:underline">Escríbenos</a></li>
+            <li><a href="#" class="hover:underline">Cómo comprar</a></li>
+            <li><a href="/tienda" class="hover:underline">Nuestra tienda</a></li>
+          </ul>
+            </div>
+        <div>
+          <h4 class="font-bold text-lg mb-3 tracking-wide">REDES SOCIALES</h4>
+          <div class="flex space-x-4 text-2xl mb-2 mt-2">
+            <a href="https://www.facebook.com/diego.centeno.vivas.2025" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/facebook.png') }}" alt="Facebook" style="background:#fff;border-radius:9999px;padding:4px;box-shadow:0 2px 8px #0001;border:1px solid #ccc;width:28px;height:28px;display:inline-block;opacity:1;" class="w-7 h-7"></a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/instagram.png') }}" alt="Instagram" style="background:#fff;border-radius:9999px;padding:4px;box-shadow:0 2px 8px #0001;border:1px solid #ccc;width:28px;height:28px;display:inline-block;opacity:1;" class="w-7 h-7"></a>
+            <a href="https://wa.me/51943667142" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/whatsapp.png') }}" alt="Whatsapp" style="background:#fff;border-radius:9999px;padding:4px;box-shadow:0 2px 8px #0001;border:1px solid #ccc;width:28px;height:28px;display:inline-block;opacity:1;" class="w-7 h-7"></a>
+            <a href="https://www.tiktok.com/@dieogoedmilsonvivas?lang=es" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/tiktok.png') }}" alt="Tiktok" style="background:#fff;border-radius:9999px;padding:4px;box-shadow:0 2px 8px #0001;border:1px solid #ccc;width:28px;height:28px;display:inline-block;opacity:1;" class="w-7 h-7"></a>
+            <a href="https://x.com/vivas74734" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/x.png') }}" alt="X" style="background:#fff;border-radius:9999px;padding:4px;box-shadow:0 2px 8px #0001;border:1px solid #ccc;width:28px;height:28px;display:inline-block;opacity:1;" class="w-7 h-7"></a>
+          </div>
+          <h5 class="font-semibold text-sm mt-1 mb-1">BANCOS CON LOS QUE OPERAMOS:</h5>
+          <div class="flex space-x-3 mt-1">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" class="h-7 bg-white rounded p-1 shadow"/>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-7 bg-white rounded p-1 shadow"/>
+            <img src="/static/img/paypal.png" alt="Paypal" class="h-7 bg-white rounded p-1 shadow"/>
+            <img src="/static/img/yape.png" alt="Stripe" class="h-7 bg-white rounded p-1 shadow"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Línea divisoria -->
+    <div class="border-t border-red-300 my-6"></div>
+    <!-- Servicios destacados -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-sm">
+      <div class="flex flex-col items-center">
+        <span class="text-2xl mb-1"><i class="fas fa-truck"></i></span>
+        <span class="font-semibold">ENTREGA POR TODO SAN VICENTE DE CAÑETE</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="text-2xl mb-1"><i class="fas fa-lock"></i></span>
+        <span class="font-semibold">PAGOS 100% SEGUROS</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="text-2xl mb-1"><i class="fas fa-star"></i></span>
+        <span class="font-semibold">PRODUCTOS DE CALIDAD</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="text-2xl mb-1"><i class="fas fa-user-headset"></i></span>
+        <span class="font-semibold">ATENCIÓN AL CLIENTE</span>
+      </div>
+    </div>
+    <!-- Frase y derechos -->
+    <div class="mt-8 text-center">
+      <div class="text-base font-semibold mb-1 tracking-wide">SOMOS UN EMPRENDIMIENTO</div>
+      <div class="italic text-sm text-red-100 mb-2">"Realza tu belleza de adentro hacia afuera con productos que cuidan tu piel y resalten lo mejor de ti."</div>
+      <div class="text-xs text-red-100">&copy; {{ 2024 }} bycint Cosméticos. Todos los derechos reservados.</div>
+    </div>
+  </div>
+</footer> 

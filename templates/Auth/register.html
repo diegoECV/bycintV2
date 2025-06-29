@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - bycint Cosméticos{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Crear cuenta
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('login') }}" class="font-medium text-green-600 hover:text-green-500">
+                Inicia sesión aquí
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <!-- Mensajes de error/éxito -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-4 rounded-md {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200{% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Formulario de registro con email -->
+            <form class="space-y-6" method="POST" action="{{ url_for('register') }}" id="registerForm">
+                <!-- Token CSRF -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                
+                <div>
+                    <label for="nombre" class="block text-sm font-medium text-gray-700">
+                        Nombre completo <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative">
+                        <input id="nombre" name="nombre" type="text" autocomplete="name" required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                               placeholder="Tu nombre completo"
+                               onblur="validateNombre(this)">
+                        <div id="nombre-error" class="hidden text-red-600 text-xs mt-1"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Correo electrónico <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative">
+                        <input id="email" name="email" type="email" autocomplete="email" required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                               placeholder="tu@email.com"
+                               onblur="validateEmail(this)">
+                        <div id="email-error" class="hidden text-red-600 text-xs mt-1"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Contraseña <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative">
+                        <input id="password" name="password" type="password" autocomplete="new-password" required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                               placeholder="Mínimo 8 caracteres"
+                               onblur="validatePassword(this)"
+                               oninput="checkPasswordStrength(this)">
+                        <div id="password-error" class="hidden text-red-600 text-xs mt-1"></div>
+                        <div id="password-strength" class="mt-2">
+                            <div class="text-xs text-gray-600 mb-1">Fortaleza de la contraseña:</div>
+                            <div class="flex space-x-1">
+                                <div id="strength-1" class="h-1 flex-1 bg-gray-200 rounded"></div>
+                                <div id="strength-2" class="h-1 flex-1 bg-gray-200 rounded"></div>
+                                <div id="strength-3" class="h-1 flex-1 bg-gray-200 rounded"></div>
+                                <div id="strength-4" class="h-1 flex-1 bg-gray-200 rounded"></div>
+                            </div>
+                            <div id="strength-text" class="text-xs mt-1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700">
+                        Confirmar contraseña <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative">
+                        <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                               placeholder="Repite tu contraseña"
+                               onblur="validateConfirmPassword(this)">
+                        <div id="confirm-password-error" class="hidden text-red-600 text-xs mt-1"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="telefono" class="block text-sm font-medium text-gray-700">
+                        Teléfono (opcional)
+                    </label>
+                    <div class="mt-1 relative">
+                        <input id="telefono" name="telefono" type="tel" autocomplete="tel"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                               placeholder="+51 999 999 999"
+                               onblur="validateTelefono(this)">
+                        <div id="telefono-error" class="hidden text-red-600 text-xs mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox" required
+                           class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-900">
+                        Acepto los <a href="{{ url_for('legal_terminos') }}" target="_blank" class="text-green-600 hover:text-green-500">términos y condiciones</a> <span class="text-red-500">*</span>
+                    </label>
+                </div>
+
+                <div>
+                    <button type="submit" id="submitBtn"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="submitText">Crear cuenta</span>
+                        <svg id="loadingIcon" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            {#
+            <div class="mt-6">
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="mx-4 text-gray-500 whitespace-nowrap">O regístrate con</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <!-- Facebook Registration -->
+                    <div>
+                        <a href="{{ url_for('facebook_register') }}"
+                           class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10C20 4.477 15.523 0 10 0S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="ml-2">Facebook</span>
+                        </a>
+                    </div>
+                    <!-- Google Registration -->
+                    <div>
+                        <a href="{{ url_for('google_register') }}"
+                           class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span class="ml-2">Google</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            #}
+        </div>
+    </div>
+</div>
+
+<script>
+// Validaciones del frontend
+function validateNombre(input) {
+    const nombre = input.value.trim();
+    const errorDiv = document.getElementById('nombre-error');
+    
+    if (!nombre) {
+        showError(input, errorDiv, 'El nombre es obligatorio');
+        return false;
+    }
+    
+    if (nombre.length < 2) {
+        showError(input, errorDiv, 'El nombre debe tener al menos 2 caracteres');
+        return false;
+    }
+    
+    if (nombre.length > 100) {
+        showError(input, errorDiv, 'El nombre no puede exceder 100 caracteres');
+        return false;
+    }
+    
+    const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!nombreRegex.test(nombre)) {
+        showError(input, errorDiv, 'El nombre solo puede contener letras y espacios');
+        return false;
+    }
+    
+    hideError(input, errorDiv);
+    return true;
+}
+
+function validateEmail(input) {
+    const email = input.value.trim();
+    const errorDiv = document.getElementById('email-error');
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!email) {
+        showError(input, errorDiv, 'El email es obligatorio');
+        return false;
+    }
+    
+    if (!emailRegex.test(email)) {
+        showError(input, errorDiv, 'Por favor ingresa un email válido');
+        return false;
+    }
+    
+    if (email.length > 254) {
+        showError(input, errorDiv, 'El email es demasiado largo');
+        return false;
+    }
+    
+    hideError(input, errorDiv);
+    return true;
+}
+
+function validatePassword(input) {
+    const password = input.value;
+    const errorDiv = document.getElementById('password-error');
+    
+    if (!password) {
+        showError(input, errorDiv, 'La contraseña es obligatoria');
+        return false;
+    }
+    
+    if (password.length < 8) {
+        showError(input, errorDiv, 'La contraseña debe tener al menos 8 caracteres');
+        return false;
+    }
+    
+    if (password.length > 128) {
+        showError(input, errorDiv, 'La contraseña no puede exceder 128 caracteres');
+        return false;
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+        showError(input, errorDiv, 'La contraseña debe contener al menos una letra mayúscula');
+        return false;
+    }
+    
+    if (!/[a-z]/.test(password)) {
+        showError(input, errorDiv, 'La contraseña debe contener al menos una letra minúscula');
+        return false;
+    }
+    
+    if (!/\d/.test(password)) {
+        showError(input, errorDiv, 'La contraseña debe contener al menos un número');
+        return false;
+    }
+    
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        showError(input, errorDiv, 'La contraseña debe contener al menos un carácter especial (!@#$%^&*)');
+        return false;
+    }
+    
+    // Verificar contraseñas comunes
+    const commonPasswords = ['password', '123456', '123456789', 'qwerty', 'abc123', 'password123', 'admin', 'letmein', 'welcome', 'monkey'];
+    if (commonPasswords.includes(password.toLowerCase())) {
+        showError(input, errorDiv, 'La contraseña es demasiado común, elige una más segura');
+        return false;
+    }
+    
+    hideError(input, errorDiv);
+    return true;
+}
+
+function validateConfirmPassword(input) {
+    const confirmPassword = input.value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('confirm-password-error');
+    
+    if (!confirmPassword) {
+        showError(input, errorDiv, 'Debes confirmar tu contraseña');
+        return false;
+    }
+    
+    if (confirmPassword !== password) {
+        showError(input, errorDiv, 'Las contraseñas no coinciden');
+        return false;
+    }
+    
+    hideError(input, errorDiv);
+    return true;
+}
+
+function validateTelefono(input) {
+    const telefono = input.value.trim();
+    const errorDiv = document.getElementById('telefono-error');
+    
+    if (!telefono) {
+        hideError(input, errorDiv); // Es opcional
+        return true;
+    }
+    
+    // Patrón para teléfonos peruanos
+    const peruRegex = /^(\+51\s?)?[9]\d{8}$/;
+    // Patrón internacional básico
+    const intlRegex = /^\+?[\d\s\-\(\)]{7,15}$/;
+    
+    if (!peruRegex.test(telefono) && !intlRegex.test(telefono)) {
+        showError(input, errorDiv, 'Formato de teléfono inválido');
+        return false;
+    }
+    
+    hideError(input, errorDiv);
+    return true;
+}
+
+function checkPasswordStrength(input) {
+    const password = input.value;
+    const strength1 = document.getElementById('strength-1');
+    const strength2 = document.getElementById('strength-2');
+    const strength3 = document.getElementById('strength-3');
+    const strength4 = document.getElementById('strength-4');
+    const strengthText = document.getElementById('strength-text');
+    
+    let score = 0;
+    let text = '';
+    let color = '';
+    
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+    if (password.length >= 12) score++;
+    
+    // Reset colors
+    [strength1, strength2, strength3, strength4].forEach(bar => {
+        bar.className = 'h-1 flex-1 bg-gray-200 rounded';
+    });
+    
+    if (score <= 2) {
+        color = 'bg-red-500';
+        text = 'Débil';
+    } else if (score <= 4) {
+        color = 'bg-yellow-500';
+        text = 'Media';
+    } else if (score <= 5) {
+        color = 'bg-blue-500';
+        text = 'Buena';
+    } else {
+        color = 'bg-green-500';
+        text = 'Excelente';
+    }
+    
+    // Apply colors
+    for (let i = 0; i < Math.min(score, 4); i++) {
+        [strength1, strength2, strength3, strength4][i].className = `h-1 flex-1 ${color} rounded`;
+    }
+    
+    strengthText.textContent = text;
+    strengthText.className = `text-xs mt-1 ${color.replace('bg-', 'text-')}`;
+}
+
+function showError(input, errorDiv, message) {
+    input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+    errorDiv.textContent = message;
+    errorDiv.classList.remove('hidden');
+}
+
+function hideError(input, errorDiv) {
+    input.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+    input.classList.add('border-gray-300', 'focus:border-green-500', 'focus:ring-green-500');
+    errorDiv.classList.add('hidden');
+}
+
+// Validación del formulario completo
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const nombre = document.getElementById('nombre');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const telefono = document.getElementById('telefono');
+    const terms = document.getElementById('terms');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const loadingIcon = document.getElementById('loadingIcon');
+    
+    // Validar campos
+    const isNombreValid = validateNombre(nombre);
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
+    const isTelefonoValid = validateTelefono(telefono);
+    
+    if (!terms.checked) {
+        e.preventDefault();
+        alert('Debes aceptar los términos y condiciones');
+        return false;
+    }
+    
+    if (!isNombreValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid || !isTelefonoValid) {
+        e.preventDefault();
+        return false;
+    }
+    
+    // Mostrar loading
+    submitBtn.disabled = true;
+    submitText.textContent = 'Creando cuenta...';
+    loadingIcon.classList.remove('hidden');
+    
+    // Limpiar errores previos
+    document.querySelectorAll('.text-red-600').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('input').forEach(input => {
+        input.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+        input.classList.add('border-gray-300', 'focus:border-green-500', 'focus:ring-green-500');
+    });
+});
+
+// Limpiar errores al escribir
+document.getElementById('nombre').addEventListener('input', function() {
+    const errorDiv = document.getElementById('nombre-error');
+    if (this.value.trim()) {
+        hideError(this, errorDiv);
+    }
+});
+
+document.getElementById('email').addEventListener('input', function() {
+    const errorDiv = document.getElementById('email-error');
+    if (this.value.trim()) {
+        hideError(this, errorDiv);
+    }
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    const errorDiv = document.getElementById('password-error');
+    if (this.value) {
+        hideError(this, errorDiv);
+    }
+});
+
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const errorDiv = document.getElementById('confirm-password-error');
+    if (this.value) {
+        hideError(this, errorDiv);
+    }
+});
+
+document.getElementById('telefono').addEventListener('input', function() {
+    const errorDiv = document.getElementById('telefono-error');
+    if (this.value.trim()) {
+        hideError(this, errorDiv);
+    }
+});
+
+// Prevenir múltiples envíos
+let isSubmitting = false;
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    if (isSubmitting) {
+        e.preventDefault();
+        return false;
+    }
+    isSubmitting = true;
+});
+</script>
+{% endblock %} 

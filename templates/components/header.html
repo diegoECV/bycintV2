@@ -1,0 +1,209 @@
+<!-- Barra superior -->
+<div class="bg-gray-900 text-gray-100 text-sm py-2 px-4 flex justify-between items-center">
+    <div>
+        <span>Bienvenido a la tienda bycint</span>
+    </div>
+    <div class="space-x-3">
+        <a href="https://www.facebook.com/diego.centeno.vivas.2025" target="_blank" rel="noopener" class="hover:text-green-400"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/vivas74734" target="_blank" rel="noopener" class="hover:text-green-400"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="hover:text-green-400"><i class="fab fa-instagram"></i></a>
+    </div>
+</div>
+
+<!-- Header y navegación -->
+<header class="bg-white shadow">
+    <div class="container mx-auto flex flex-wrap md:flex-nowrap justify-between items-center py-4 px-4 gap-2">
+        <a href="/" class="text-3xl font-bold text-green-500 whitespace-nowrap">byCint</a>
+        <nav class="space-x-8 text-lg flex flex-wrap items-center justify-center flex-1 min-w-0">
+            <a href="/" class="hover:text-green-500">Inicio</a>
+            <a href="/nosotros" class="hover:text-green-500">Nosotros</a>
+            <a href="/tienda" class="hover:text-green-500">Tienda</a>
+            <a href="/contacto" class="hover:text-green-500">Contacto</a>
+            <a href="/comunidad" class="hover:text-green-500">Comunidad</a>
+        </nav>
+        <form action="{{ url_for('buscar') }}" method="get" class="flex items-center w-full max-w-xs md:max-w-md lg:max-w-lg mx-2 order-3 md:order-none mt-2 md:mt-0">
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" name="q" placeholder="Buscar productos..." class="w-full pl-10 pr-3 py-2 rounded-full border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all shadow-sm focus:shadow-lg text-sm" required>
+            </div>
+            <button type="submit" class="ml-2 px-4 py-2 rounded-full bg-green-500 text-white font-semibold hover:bg-green-600 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300">
+                Buscar
+            </button>
+        </form>
+        <div class="flex items-center space-x-4 min-w-fit">
+            {% if session.get('user_id') %}
+                <div class="relative group flex items-center gap-x-4">
+                    <span class="font-medium">{{ session.get('user_name', 'Usuario') }}</span>
+                    <div class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center bg-white">
+                        <i class="fas fa-user text-gray-400 text-xl"></i>
+                    </div>
+                    <!-- Carrito separado y alineado -->
+                    <div class="relative ml-6" id="cart-container" style="z-index:51;">
+                        <a href="{{ url_for('carrito') }}" class="relative hover:text-green-500 px-4 py-2 bg-green-100 rounded font-semibold" id="cart-icon-link">
+                            Carrito
+                            <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+                        </a>
+                        <div id="mini-cart" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50 p-4 transition-all">
+                            <h4 class="font-bold text-lg mb-3">Mi carrito</h4>
+                            <div id="mini-cart-list" class="max-h-60 overflow-y-auto"></div>
+                            <div class="flex justify-between items-center mt-4 mb-2">
+                                <span class="font-semibold">Total:</span>
+                                <span id="mini-cart-total" class="font-bold text-green-600">S/ 0.00</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="/carrito" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded text-center font-semibold hover:bg-gray-300 transition">Ver carrito</a>
+                                <a href="#" id="mini-cart-pagar" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-center font-semibold hover:bg-green-700 transition">Ir a pagar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="flex items-center cursor-pointer select-none">
+                        <i class="fas fa-chevron-down text-xs ml-2 transition-transform duration-200 group-hover:rotate-180"></i>
+                    </span>
+                    <!-- Submenú desplegable -->
+                    <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-30">
+                        <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Perfil</a>
+                        <a href="/mis-pedidos" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Mis pedidos</a>
+                        <form action="/logout" method="post" class="m-0">
+                            <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">Cerrar sesión</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="px-4 py-2 rounded border border-green-500 text-green-600 bg-white hover:bg-green-50 hover:text-green-700 font-semibold transition">Iniciar Sesión</a>
+                <a href="{{ url_for('register') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-semibold transition ml-2">Registrarse</a>
+                <div class="relative ml-8" style="z-index:51;">
+                    <a href="{{ url_for('carrito') }}" class="relative hover:text-green-500 px-4 py-2 bg-green-100 rounded font-semibold" id="cart-icon-link">
+                        Carrito
+                        <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+                    </a>
+                    <div id="mini-cart" class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg z-50 p-4 transition-all">
+                        <h4 class="font-bold text-lg mb-3">Mi carrito</h4>
+                        <div id="mini-cart-list" class="max-h-60 overflow-y-auto"></div>
+                        <div class="flex justify-between items-center mt-4 mb-2">
+                            <span class="font-semibold">Total:</span>
+                            <span id="mini-cart-total" class="font-bold text-green-600">S/ 0.00</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="/carrito" class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded text-center font-semibold hover:bg-gray-300 transition">Ver carrito</a>
+                            <a href="#" id="mini-cart-pagar" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-center font-semibold hover:bg-green-700 transition">Ir a pagar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<!-- Menú de categorías principal -->
+<nav class="bg-green-50 border-b border-green-200 shadow-sm">
+    <div class="container mx-auto px-4">
+        <ul class="flex flex-wrap justify-center gap-2 md:gap-6 py-2 text-base font-medium">
+            <!-- Marcas -->
+            <li class="relative group">
+                <a href="/marcas" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center">
+                    Marcas
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20">
+                    <li><a href="/marca/jabila" class="block px-4 py-2 hover:bg-green-100">JABILA</a></li>
+                    <li><a href="/marca/pandora" class="block px-4 py-2 hover:bg-green-100">PANDORA</a></li>
+                    <li><a href="/marca/flower-secret" class="block px-4 py-2 hover:bg-green-100">FLOWER SECRET</a></li>
+                    <li><a href="/marca/gevl" class="block px-4 py-2 hover:bg-green-100">GEVL</a></li>
+                    <li><a href="/marca/ybel" class="block px-4 py-2 hover:bg-green-100">YBEL</a></li>
+                </ul>
+            </li>
+            <!-- Sets -->
+            <li class="relative group">
+                <a href="/categoria/sets" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Sets
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/sets?tipo=Sets%20de%20Maquillaje" class="block px-4 py-2 hover:bg-green-100">Sets de Maquillaje</a></li>
+                    <li><a href="/categoria/sets?tipo=Sets%20de%20Cuidado" class="block px-4 py-2 hover:bg-green-100">Sets de Cuidado</a></li>
+                    <li><a href="/categoria/sets?tipo=Sets%20de%20Brochas" class="block px-4 py-2 hover:bg-green-100">Sets de Brochas</a></li>
+                </ul>
+            </li>
+            <!-- Maquillaje -->
+            <li class="relative group">
+                <a href="/categoria/maquillaje" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Maquillaje
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/maquillaje?tipo=Bases" class="block px-4 py-2 hover:bg-green-100">Bases</a></li>
+                    <li><a href="/categoria/maquillaje?tipo=Sombras" class="block px-4 py-2 hover:bg-green-100">Sombras</a></li>
+                    <li><a href="/categoria/maquillaje?tipo=Rubores" class="block px-4 py-2 hover:bg-green-100">Rubores</a></li>
+                    <li><a href="/categoria/maquillaje?tipo=Delineadores" class="block px-4 py-2 hover:bg-green-100">Delineadores</a></li>
+                </ul>
+            </li>
+            <!-- Joyería -->
+            <li class="relative group">
+                <a href="/categoria/joyeria" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Joyería
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/joyeria?tipo=Collares" class="block px-4 py-2 hover:bg-green-100">Collares</a></li>
+                    <li><a href="/categoria/joyeria?tipo=Pulseras" class="block px-4 py-2 hover:bg-green-100">Pulseras</a></li>
+                    <li><a href="/categoria/joyeria?tipo=Anillos" class="block px-4 py-2 hover:bg-green-100">Anillos</a></li>
+                    <li><a href="/categoria/joyeria?tipo=Aretes" class="block px-4 py-2 hover:bg-green-100">Aretes</a></li>
+                </ul>
+            </li>
+            <!-- Perfumes -->
+            <li class="relative group">
+                <a href="/categoria/perfume" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Perfumes
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/perfume?genero=Mujer" class="block px-4 py-2 hover:bg-green-100">Mujer</a></li>
+                    <li><a href="/categoria/perfume?genero=Hombre" class="block px-4 py-2 hover:bg-green-100">Hombre</a></li>
+                    <li><a href="/categoria/perfume?genero=Unisex" class="block px-4 py-2 hover:bg-green-100">Unisex</a></li>
+                </ul>
+            </li>
+            <!-- Pintalabios -->
+            <li class="relative group">
+                <a href="/categoria/pintalabios" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Pintalabios
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/pintalabios?tipo=Líquidos" class="block px-4 py-2 hover:bg-green-100">Líquidos</a></li>
+                    <li><a href="/categoria/pintalabios?tipo=Barra" class="block px-4 py-2 hover:bg-green-100">Barra</a></li>
+                    <li><a href="/categoria/pintalabios?tipo=Gloss" class="block px-4 py-2 hover:bg-green-100">Gloss</a></li>
+                </ul>
+            </li>
+            <!-- Cuidado de la piel -->
+            <li class="relative group">
+                <a href="/categoria/cuidado-piel" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Cuidado de la piel
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/cuidado-piel?tipo_de_piel=Normal" class="block px-4 py-2 hover:bg-green-100">Piel Normal</a></li>
+                    <li><a href="/categoria/cuidado-piel?tipo_de_piel=Seca" class="block px-4 py-2 hover:bg-green-100">Piel Seca</a></li>
+                    <li><a href="/categoria/cuidado-piel?tipo_de_piel=Grasa" class="block px-4 py-2 hover:bg-green-100">Piel Grasa</a></li>
+                    <li><a href="/categoria/cuidado-piel?tipo_de_piel=Mixta" class="block px-4 py-2 hover:bg-green-100">Piel Mixta</a></li>
+                    <li><a href="/categoria/cuidado-piel?tipo_de_piel=Sensible" class="block px-4 py-2 hover:bg-green-100">Piel Sensible</a></li>
+                </ul>
+            </li>
+            <!-- Accesorios -->
+            <li class="relative group">
+                <a href="/categoria/accesorios" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center z-10">
+                    Accesorios
+                    <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                    <li><a href="/categoria/accesorios?tipo=Brochas" class="block px-4 py-2 hover:bg-green-100">Brochas</a></li>
+                    <li><a href="/categoria/accesorios?tipo=Esponjas" class="block px-4 py-2 hover:bg-green-100">Esponjas</a></li>
+                    <li><a href="/categoria/accesorios?tipo=Espejos" class="block px-4 py-2 hover:bg-green-100">Espejos</a></li>
+                    <li><a href="/categoria/accesorios?tipo=Organizadores" class="block px-4 py-2 hover:bg-green-100">Organizadores</a></li>
+                    <li><a href="/categoria/accesorios?tipo=Bolsos" class="block px-4 py-2 hover:bg-green-100">Bolsos</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav> 

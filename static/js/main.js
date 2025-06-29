@@ -5,8 +5,9 @@ console.log('JS cargado correctamente.');
 // Aquí puedes agregar interactividad personalizada para tu tienda 
 
 if (document.querySelector('.productosSwiper')) {
-  new Swiper('.productosSwiper', {
-    slidesPerView: 1,
+  const swiper = new Swiper('.productosSwiper', {
+    slidesPerView: 4,
+    slidesPerGroup: 4,
     spaceBetween: 20,
     loop: true,
     navigation: {
@@ -19,15 +20,14 @@ if (document.querySelector('.productosSwiper')) {
       dynamicBullets: false
     },
     autoplay: {
-      delay: 10000, // 10 segundos
+      delay: 7000, // 7 segundos
       disableOnInteraction: false,
-    },
-    breakpoints: {
-      640: { slidesPerView: 2, slidesPerGroup: 2 },
-      1024: { slidesPerView: 5, slidesPerGroup: 5 },
-    },
-    slidesPerGroup: 1,
+    }
   });
+  // Detener autoplay al pasar el mouse
+  const carrusel = document.querySelector('.productosSwiper');
+  carrusel.addEventListener('mouseenter', () => swiper.autoplay.stop());
+  carrusel.addEventListener('mouseleave', () => swiper.autoplay.start());
 }
 
 // Funcionalidad para botón de favorito en productos destacados

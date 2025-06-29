@@ -47,19 +47,50 @@
                     {% endfor %}
                 </tbody>
             </table>
+            
+            <!-- Sistema de Envíos -->
+            <div class="my-6 border-t pt-6">
+                <h2 class="font-bold text-lg mb-4">Opciones de Envío</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Departamento</label>
+                        <select id="departamento-envio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="">Selecciona un departamento</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Provincia</label>
+                        <select id="provincia-envio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="">Selecciona una provincia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Distrito</label>
+                        <select id="distrito-envio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="">Selecciona un distrito</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Código Postal</label>
+                        <input type="text" id="codigo-postal-envio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Código postal">
+                    </div>
+                </div>
+                <button id="btn-calcular-envio" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    Calcular Envío
+                </button>
+                
+                <!-- Opciones de envío -->
+                <div id="opciones-envio" class="mt-4"></div>
+            </div>
+            
             <div class="my-6">
                 <div class="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-5 font-bold text-lg shadow">
                     ENVÍO GRATIS EN TODAS TUS COMPRAS
                     <div class="text-xs font-normal mt-1">Por compras de S/ 100 a más</div>
                 </div>
             </div>
-            <hr class="my-6">
-            <div>
-                <h2 class="font-bold text-lg mb-2">Entrega</h2>
-                <p class="text-sm text-gray-600 mb-3">Vea las opciones de envío para sus productos, incluyendo los plazos y los precios de envío.</p>
-                <button class="px-5 py-2 border border-black rounded font-semibold hover:bg-gray-100 transition">Calcular</button>
-            </div>
         </div>
+        
         <!-- Resumen -->
         <div class="w-full lg:w-96 bg-white rounded-xl shadow p-6 h-fit">
             <div class="bg-cyan-400 text-white text-center rounded-lg py-4 font-semibold mb-4">
@@ -86,6 +117,10 @@
                 <span>Descuento</span>
                 <span id="carrito-descuento">-S/ 0.00</span>
             </div>
+            <div class="flex justify-between text-sm mb-2">
+                <span>Envío</span>
+                <span id="carrito-envio">S/ 0.00</span>
+            </div>
             <div class="flex justify-between items-center text-lg font-bold mb-4">
                 <span>Total</span>
                 <span id="carrito-total">S/ 0.00</span>
@@ -99,5 +134,19 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/catalogo_categoria.js') }}"></script>
+<script src="{{ url_for('static', filename='js/envios.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pago.js') }}"></script>
+
+<!-- Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // Inicializar Stripe
+    const stripe = Stripe('{{ config.STRIPE_PUBLISHABLE_KEY or "pk_test_placeholder" }}');
+    
+    // Hacer stripe disponible globalmente
+    window.stripe = stripe;
+</script>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ config.PAYPAL_CLIENT_ID or "placeholder" }}&currency=PEN"></script>
 {% endblock %} 

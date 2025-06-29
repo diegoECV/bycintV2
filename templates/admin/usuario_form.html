@@ -1,0 +1,150 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}{{ 'Editar' if usuario else 'Nuevo' }} Usuario - Admin{% endblock %}
+{% block header %}{{ 'Editar' if usuario else 'Nuevo' }} Usuario{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-sm p-8">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">{{ 'Editar' if usuario else 'Crear' }} Usuario</h2>
+            <p class="text-gray-600 mt-1">{{ 'Modifica la información del usuario' if usuario else 'Agrega un nuevo usuario al sistema' }}</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            <!-- Información básica -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="nombre" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre completo <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="nombre" name="nombre" 
+                           value="{{ usuario.nombre if usuario else '' }}" 
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                           placeholder="Ingresa el nombre completo">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Correo electrónico <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" id="email" name="email" 
+                           value="{{ usuario.email if usuario else '' }}" 
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                           placeholder="usuario@ejemplo.com">
+                </div>
+            </div>
+
+            <!-- Tipo de usuario y estado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="tipo_usuario" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tipo de usuario <span class="text-red-500">*</span>
+                    </label>
+                    <select id="tipo_usuario" name="tipo_usuario" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors">
+                        <option value="cliente" {% if usuario and usuario.tipo_usuario == 'cliente' %}selected{% endif %}>Cliente</option>
+                        <option value="admin" {% if usuario and usuario.tipo_usuario == 'admin' %}selected{% endif %}>Administrador</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado de verificación
+                    </label>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="email_verificado" name="email_verificado" 
+                               {% if usuario and usuario.email_verificado %}checked{% endif %}
+                               class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                        <label for="email_verificado" class="ml-2 block text-sm text-gray-900">
+                            Email verificado
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            {% if usuario %}
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-3">Información del sistema</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-500">ID de usuario:</span>
+                        <span class="font-medium text-gray-900 ml-2">{{ usuario.id }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Fecha de registro:</span>
+                        <span class="font-medium text-gray-900 ml-2">
+                            {{ usuario.fecha_registro.strftime('%d/%m/%Y %H:%M') if usuario.fecha_registro else 'N/A' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cambio de contraseña (solo para edición) -->
+            {% if usuario %}
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Cambiar contraseña</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nueva_password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nueva contraseña
+                        </label>
+                        <input type="password" id="nueva_password" name="nueva_password" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                               placeholder="Dejar vacío para mantener la actual">
+                        <p class="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
+                    </div>
+
+                    <div>
+                        <label for="confirmar_password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Confirmar contraseña
+                        </label>
+                        <input type="password" id="confirmar_password" name="confirmar_password" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                               placeholder="Repite la nueva contraseña">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-4 pt-6 border-t">
+                <a href="{{ url_for('admin_usuarios') }}" 
+                   class="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="px-6 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+                    {{ 'Actualizar' if usuario else 'Crear' }} Usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Validación de contraseñas -->
+{% if usuario %}
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const nuevaPassword = document.getElementById('nueva_password').value;
+    const confirmarPassword = document.getElementById('confirmar_password').value;
+    
+    if (nuevaPassword || confirmarPassword) {
+        if (nuevaPassword.length < 8) {
+            e.preventDefault();
+            alert('La nueva contraseña debe tener al menos 8 caracteres');
+            return;
+        }
+        
+        if (nuevaPassword !== confirmarPassword) {
+            e.preventDefault();
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+    }
+});
+</script>
+{% endif %}
+{% endblock %} 

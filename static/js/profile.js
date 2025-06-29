@@ -520,4 +520,28 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  // Navegación de secciones en el perfil
+  const navLinks = document.querySelectorAll('aside nav a, aside nav button');
+  const sections = {
+    'Perfil': document.getElementById('perfil-section'),
+    'Direcciones': document.getElementById('direcciones-section'),
+    'Tarjetas de crédito': document.getElementById('tarjetas-section'),
+    'Autenticación': document.getElementById('autenticacion-section')
+  };
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (this.textContent.trim() === 'Salir') {
+        e.preventDefault();
+        window.location.href = '/';
+        return;
+      }
+      e.preventDefault();
+      Object.values(sections).forEach(sec => sec.classList.add('hidden'));
+      const section = sections[this.textContent.trim()];
+      if (section) section.classList.remove('hidden');
+      navLinks.forEach(l => l.classList.remove('bg-red-50', 'font-semibold', 'text-red-700', 'border-l-4', 'border-red-500'));
+      this.classList.add('bg-red-50', 'font-semibold', 'text-red-700', 'border-l-4', 'border-red-500');
+    });
+  });
 }); 

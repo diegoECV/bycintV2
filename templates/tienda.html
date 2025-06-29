@@ -1,43 +1,51 @@
 {% extends "base.html" %}
+{% from 'components/macros.html' import product_card, section_card, flash_messages, loading_spinner, empty_state %}
 
 {% block title %}Tienda - bycint Cosméticos{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-12">
   <h1 class="text-4xl font-extrabold text-green-500 mb-8 text-center uppercase tracking-wide">Tienda</h1>
+  
+  <!-- Mensajes flash -->
+  {{ flash_messages() }}
+  
   <div class="flex flex-col lg:flex-row gap-8">
     <!-- Filtros laterales -->
     <aside class="w-full lg:w-64 mb-6 lg:mb-0">
-      <form id="filtros-tienda" class="space-y-6 bg-white rounded-xl shadow p-6">
-        <div>
-          <label class="block font-semibold mb-2">Categorías</label>
-          <div class="space-y-1 ml-2">
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Sets"> Sets</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Maquillaje"> Maquillaje</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Perfume"> Perfume</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Joyería"> Joyería</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Pintalabios"> Pintalabios</label>
+      {% call section_card("Filtros de Búsqueda", "", "", "", "") %}
+        <form id="filtros-tienda" class="space-y-6">
+          <div>
+            <label class="block font-semibold mb-2">Categorías</label>
+            <div class="space-y-1 ml-2">
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Sets"> Sets</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Maquillaje"> Maquillaje</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Perfume"> Perfume</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Joyería"> Joyería</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="categoria" value="Pintalabios"> Pintalabios</label>
+            </div>
           </div>
-        </div>
-        <div>
-          <label class="block font-semibold mb-2">Ofertas y Novedades</label>
-          <div class="space-y-1 ml-2">
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="oferta" value="1"> Ofertas</label>
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="novedad" value="1"> Novedades</label>
+          <div>
+            <label class="block font-semibold mb-2">Ofertas y Novedades</label>
+            <div class="space-y-1 ml-2">
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="oferta" value="1"> Ofertas</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="novedad" value="1"> Novedades</label>
+            </div>
           </div>
-        </div>
-        <div>
-          <label class="block font-semibold mb-2">Rango de precio</label>
-          <div class="flex items-center gap-2">
-            <input type="range" name="precio" min="{{ filtro_precio.min }}" max="{{ filtro_precio.max }}" value="{{ filtro_precio.max }}" class="w-full accent-red-500" id="precio-slider">
+          <div>
+            <label class="block font-semibold mb-2">Rango de precio</label>
+            <div class="flex items-center gap-2">
+              <input type="range" name="precio" min="{{ filtro_precio.min }}" max="{{ filtro_precio.max }}" value="{{ filtro_precio.max }}" class="w-full accent-red-500" id="precio-slider">
+            </div>
+            <div class="flex justify-between text-xs mt-1">
+              <span>S/ <span id="precio-min">{{ filtro_precio.min }}</span></span>
+              <span>S/ <span id="precio-max">{{ filtro_precio.max }}</span></span>
+            </div>
           </div>
-          <div class="flex justify-between text-xs mt-1">
-            <span>S/ <span id="precio-min">{{ filtro_precio.min }}</span></span>
-            <span>S/ <span id="precio-max">{{ filtro_precio.max }}</span></span>
-          </div>
-        </div>
-      </form>
+        </form>
+      {% endcall %}
     </aside>
+    
     <!-- Contenido principal -->
     <section class="flex-1">
       <div class="flex items-center justify-between mb-6">
@@ -56,7 +64,12 @@
           </div>
         </div>
       </div>
-      <div id="productos-lista" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+      
+      <!-- Lista de productos -->
+      <div id="productos-lista" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {{ loading_spinner("Cargando productos...") }}
+      </div>
+      
       <div class="flex justify-center mt-10">
         <div id="paginacion"></div>
       </div>
@@ -67,5 +80,6 @@
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/components.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tienda.js') }}"></script>
 {% endblock %} 

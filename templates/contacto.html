@@ -4,91 +4,136 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-12">
-    <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-10 tracking-wide uppercase">Contactanos</h1>
-    <div class="flex flex-col md:flex-row gap-10 max-w-5xl mx-auto">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-10 tracking-wide uppercase">CONTÁCTANOS</h1>
+    <!-- Dos columnas: info y formulario -->
+    <div class="flex flex-col md:flex-row gap-10 max-w-4xl mx-auto">
         <!-- Columna izquierda: Información de contacto -->
-        <div class="md:w-1/2 bg-white rounded-lg p-6 flex flex-col justify-between border border-gray-200 shadow-sm mb-6 md:mb-0">
-            <div>
-                <h2 class="text-lg font-bold mb-2">Estamos para ayudarte</h2>
-                <p class="text-sm text-gray-700 mb-6">Si tienes alguna pregunta, sugerencia o necesitas asesoría personalizada, no dudes en ponerte en contacto con nosotros.</p>
-                <ul class="space-y-4 mb-6">
-                    <li class="flex items-start gap-3">
-                        <span class="text-xl mt-1"><i class="fa-solid fa-location-dot"></i></span>
-                        <div>
-                            <span class="font-semibold">Ubicación</span><br>
-                            <span class="text-sm text-gray-700">Av. Principal 123, Lima, Perú</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-xl mt-1"><i class="fa-solid fa-envelope"></i></span>
-                        <div>
-                            <span class="font-semibold">Correo electronico</span><br>
-                            <span class="text-sm text-gray-700">by.cint@gmail.com</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-xl mt-1"><i class="fa-solid fa-phone"></i></span>
-                        <div>
-                            <span class="font-semibold">Telefono</span><br>
-                            <span class="text-sm text-gray-700">+51 987 654 321</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-xl mt-1"><i class="fa-solid fa-clock"></i></span>
-                        <div>
-                            <span class="font-semibold">Horario de atención</span><br>
-                            <span class="text-sm text-gray-700">Lunes a Viernes: 9am - 7pm<br>Sábados: 10am - 4pm</span>
-                        </div>
-                    </li>
-                </ul>
-                <div class="mb-2 font-semibold">Síguenos :</div>
-                <div class="flex space-x-4 text-2xl">
-                    <a href="#" class="hover:text-black"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="hover:text-black"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="hover:text-black"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="hover:text-black"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" class="hover:text-black"><i class="fab fa-whatsapp"></i></a>
+        <div class="md:w-1/2 bg-white rounded-lg p-8 border border-gray-200 shadow-sm flex flex-col justify-between">
+            <h2 class="text-2xl font-bold mb-4">Estamos para ayudarte</h2>
+            <p class="text-gray-700 mb-6">Si tienes alguna pregunta, sugerencia o necesitas asesoría personalizada, no dudes en ponerte en contacto con nosotros.</p>
+            <div class="space-y-5 mb-6">
+                <div class="flex items-start gap-4">
+                    <img src="{{ url_for('static', filename='icons/ubicacion.png') }}" alt="Ubicación" class="w-7 h-7 mt-1">
+                    <div>
+                        <span class="font-semibold">Ubicación</span><br>
+                        <span class="text-sm text-gray-700">Av. Principal 123, Lima, Perú</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <img src="{{ url_for('static', filename='icons/email.png') }}" alt="Correo" class="w-7 h-7 mt-1">
+                    <div>
+                        <span class="font-semibold">Correo electrónico</span><br>
+                        <span class="text-sm text-gray-700">diego.centeno@vallegrande.edu.pe</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <img src="{{ url_for('static', filename='icons/telefono.png') }}" alt="Teléfono" class="w-7 h-7 mt-1">
+                    <div>
+                        <span class="font-semibold">Teléfono</span><br>
+                        <span class="text-sm text-gray-700">+51 943 667 412</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <img src="{{ url_for('static', filename='icons/horario.png') }}" alt="Horario" class="w-7 h-7 mt-1">
+                    <div>
+                        <span class="font-semibold">Horario de atención</span><br>
+                        <span class="text-sm text-gray-700">Lunes a Viernes: 9am - 7pm<br>Sábados: 10am - 4pm</span>
+                    </div>
                 </div>
             </div>
+            <div class="mb-2 font-semibold">Síguenos:</div>
+            <div class="flex space-x-4 text-2xl">
+                <a href="https://www.facebook.com/diego.centeno.vivas.2025" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/facebook.png') }}" alt="Facebook" class="w-7 h-7"></a>
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/instagram.png') }}" alt="Instagram" class="w-7 h-7"></a>
+                <a href="https://wa.me/51943667142" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/whatsapp.png') }}" alt="Whatsapp" class="w-7 h-7"></a>
+                <a href="https://www.tiktok.com/@dieogoedmilsonvivas?lang=es" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/tiktok.png') }}" alt="Tiktok" class="w-7 h-7"></a>
+                <a href="https://x.com/vivas74734" target="_blank" rel="noopener" class="hover:opacity-80 transition"><img src="{{ url_for('static', filename='icons/x.png') }}" alt="X" class="w-7 h-7"></a>
+            </div>
         </div>
-        <!-- Columna derecha: Formulario -->
-        <div class="md:w-1/2 bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-            <form class="space-y-4">
-                <div>
-                    <label for="nombre" class="block font-semibold mb-1">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required class="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black">
+        <!-- Columna derecha: Formulario de contacto -->
+        <div class="md:w-1/2 bg-white rounded-lg p-8 border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold mb-6">Envíanos un mensaje</h2>
+            <form method="POST" action="{{ url_for('contacto') }}" class="space-y-4" id="contacto-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="nombre" class="block font-semibold mb-2 text-gray-700">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label for="apellido" class="block font-semibold mb-2 text-gray-700">Apellido *</label>
+                        <input type="text" id="apellido" name="apellido" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                    </div>
                 </div>
                 <div>
-                    <label for="apellido" class="block font-semibold mb-1">Apellido</label>
-                    <input type="text" id="apellido" name="apellido" required class="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black">
+                    <label for="email" class="block font-semibold mb-2 text-gray-700">Correo Electrónico *</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
                 </div>
                 <div>
-                    <label for="email" class="block font-semibold mb-1">Correo Electronico</label>
-                    <input type="email" id="email" name="email" required class="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black">
+                    <label for="asunto" class="block font-semibold mb-2 text-gray-700">Asunto *</label>
+                    <input type="text" id="asunto" name="asunto" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
                 </div>
                 <div>
-                    <label for="asunto" class="block font-semibold mb-1">Asunto</label>
-                    <input type="text" id="asunto" name="asunto" required class="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black">
+                    <label for="mensaje" class="block font-semibold mb-2 text-gray-700">Mensaje *</label>
+                    <textarea id="mensaje" name="mensaje" rows="5" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"></textarea>
                 </div>
-                <div>
-                    <label for="mensaje" class="block font-semibold mb-1">Mensaje</label>
-                    <textarea id="mensaje" name="mensaje" rows="4" required class="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-black text-white font-semibold py-2 rounded hover:bg-gray-900 transition">Enviar Mensaje</button>
+                <button type="submit" id="submit-btn" class="w-full bg-green-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg">
+                    <span id="btn-text">Enviar Mensaje</span>
+                    <span id="btn-loading" class="hidden">
+                        <i class="fa-solid fa-spinner fa-spin mr-2"></i>Enviando...
+                    </span>
+                </button>
             </form>
         </div>
     </div>
-    <!-- Nueva sección: Ubicación de la tienda -->
-    <div class="mt-12">
-        <h2 class="text-2xl font-bold mb-4 text-center text-green-600">¿Dónde estamos?</h2>
-        <div class="flex flex-col items-center">
-            <div class="w-full max-w-2xl rounded-xl overflow-hidden shadow-lg mb-4">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.019964964049!2d-76.3668378240496!3d-13.08096498724637!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9110b7e2e2e2e2e3%3A0x123456789abcdef!2sMercado%20Modelo!5e0!3m2!1ses-419!2spe!4v1718040000000!5m2!1ses-419!2spe" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-            <div class="text-center">
-                <span class="font-semibold">Dirección:</span> WJG8+3F4, San Vicente de Cañete 15701, Perú
-            </div>
-        </div>
+    <!-- Mapa abajo -->
+    <div class="w-full max-w-4xl mx-auto mt-10 rounded-lg overflow-hidden shadow-lg">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.019964964049!2d-76.3668378240496!3d-13.08096498724637!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9110b7e2e2e2e2e3%3A0x123456789abcdef!2sMercado%20Modelo!5e0!3m2!1ses-419!2spe!4v1718040000000!5m2!1ses-419!2spe" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <!-- Galería de fotos y video -->
+    <div class="w-full max-w-4xl mx-auto mt-10">
+      <h2 class="text-2xl font-bold text-center mb-6 text-green-600">Conoce más de nosotros</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <img src="{{ url_for('static', filename='img/tienda.jpg') }}" alt="Nuestra tienda" class="rounded-lg shadow object-cover w-full h-32 md:h-40">
+        <img src="{{ url_for('static', filename='img/producto_destacado.png') }}" alt="Producto destacado" class="rounded-lg shadow object-cover w-full h-32 md:h-40">
+        <img src="{{ url_for('static', filename='img/categoria_maquillaje.png') }}" alt="Maquillaje" class="rounded-lg shadow object-cover w-full h-32 md:h-40">
+        <img src="{{ url_for('static', filename='img/categoria_cuidado.png') }}" alt="Cuidado de la piel" class="rounded-lg shadow object-cover w-full h-32 md:h-40">
+      </div>
+      <div class="aspect-w-16 aspect-h-9 mb-8">
+        <iframe width="100%" height="360" src="https://www.youtube.com/embed/Ilb6ld3AN0M?si=OQL8vvjN6tE6xKzl" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen class="rounded-lg shadow"></iframe>
+      </div>
     </div>
 </div>
+<script>
+document.getElementById('contacto-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoading = document.getElementById('btn-loading');
+    
+    // Mostrar estado de carga
+    submitBtn.disabled = true;
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    submitBtn.classList.add('opacity-75');
+});
+
+// Validación en tiempo real
+document.querySelectorAll('#contacto-form input, #contacto-form textarea').forEach(input => {
+    input.addEventListener('blur', function() {
+        if (this.hasAttribute('required') && !this.value.trim()) {
+            this.classList.add('border-red-500');
+            this.classList.remove('border-gray-300');
+        } else {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        }
+    });
+    
+    input.addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        }
+    });
+});
+</script>
 {% endblock %} 

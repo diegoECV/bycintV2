@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Marcas - bycint Cosméticos{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-10 tracking-wide uppercase">Nuestras Marcas</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <a href="/marca/jabila" class="flex flex-col items-center bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <img src="/static/img/categoria_maquillaje.png" alt="JABILA" class="w-20 h-20 object-contain mb-4">
+            <span class="font-bold text-lg">JABILA</span>
+        </a>
+        <a href="/marca/pandora" class="flex flex-col items-center bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <img src="/static/img/collar_plata.png" alt="PANDORA" class="w-20 h-20 object-contain mb-4">
+            <span class="font-bold text-lg">PANDORA</span>
+        </a>
+        <a href="/marca/flower-secret" class="flex flex-col items-center bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <img src="/static/img/crema_dia.png" alt="FLOWER SECRET" class="w-20 h-20 object-contain mb-4">
+            <span class="font-bold text-lg">FLOWER SECRET</span>
+        </a>
+        <a href="/marca/gevl" class="flex flex-col items-center bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <img src="/static/img/set_brochas.png" alt="GEVL" class="w-20 h-20 object-contain mb-4">
+            <span class="font-bold text-lg">GEVL</span>
+        </a>
+        <a href="/marca/ybel" class="flex flex-col items-center bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <img src="/static/img/paleta_sombras.png" alt="YBEL" class="w-20 h-20 object-contain mb-4">
+            <span class="font-bold text-lg">YBEL</span>
+        </a>
+    </div>
+</div>
+{% endblock %} 

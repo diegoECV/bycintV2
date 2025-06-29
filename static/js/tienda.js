@@ -71,14 +71,24 @@ function fetchAndRenderProductos() {
 function renderProductos(productos) {
   const cont = document.getElementById('productos-lista');
   if (!cont) return;
+  
   if (!productos.length) {
-    cont.innerHTML = '<div class="col-span-4 text-center text-gray-400 py-12">No se encontraron productos.</div>';
+    cont.innerHTML = `
+      <div class="col-span-full">
+        <div class="text-center py-12">
+          <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+          <h3 class="text-xl font-semibold text-gray-600 mb-2">No se encontraron productos</h3>
+          <p class="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
+        </div>
+      </div>
+    `;
     return;
   }
+  
   cont.innerHTML = productos.map(prod => `
     <div class="relative bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center group transition-transform hover:-translate-y-1 hover:shadow-2xl cursor-pointer tarjeta-producto" data-id="${prod.id}">
       ${prod.descuento ? `<span class="absolute left-4 top-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-${prod.descuento}%</span>` : ''}
-      <button class="absolute right-4 top-4 text-gray-300 hover:text-red-500 text-xl transition"><i class="fa-regular fa-heart"></i></button>
+      <button class="absolute right-4 top-4 text-gray-300 hover:text-red-500 text-xl transition btn-fav"><i class="fa-regular fa-heart"></i></button>
       <img src="/static/img/${prod.imagen}" alt="${prod.nombre}" class="w-48 h-48 object-contain mb-4 rounded-lg shadow">
       <h3 class="text-base font-bold text-center mb-1">${prod.nombre}</h3>
       <div class="flex items-center gap-2 mb-3">
@@ -94,68 +104,13 @@ function renderProductos(productos) {
   // Evento para click en la tarjeta (excepto botón Agregar)
   cont.querySelectorAll('.tarjeta-producto').forEach(card => {
     card.addEventListener('click', function(e) {
-      if (e.target.closest('.btn-add-cart')) return; // No navegar si es el botón Agregar
+      if (e.target.closest('.btn-add-cart') || e.target.closest('.btn-fav')) return; // No navegar si es el botón Agregar o Favorito
       const id = this.getAttribute('data-id');
       window.location.href = `/producto/${id}`;
     });
   });
 
-  // Evento para agregar al carrito
-  cont.addEventListener('click', function(e) {
-    if (e.target.closest('.btn-add-cart')) {
-      const btn = e.target.closest('.btn-add-cart');
-      const productoId = btn.getAttribute('data-id');
-      btn.disabled = true;
-      fetch('/api/agregar_carrito', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ producto_id: productoId })
-      })
-      .then(res => {
-        if (res.status === 401) {
-          alert('Debes iniciar sesión para agregar al carrito');
-          setTimeout(() => window.location.href = '/login', 1500);
-          throw new Error('No logueado');
-        }
-        return res.json();
-      })
-      .then(data => {
-        btn.disabled = false;
-        if (data.success) {
-          // Notificación visual
-          let notif = document.createElement('div');
-          notif.className = 'fixed top-6 right-6 z-50 px-6 py-3 rounded shadow-lg text-white font-bold transition-all bg-green-600';
-          notif.textContent = 'Producto agregado al carrito';
-          document.body.appendChild(notif);
-          setTimeout(() => notif.remove(), 2000);
-          // Actualizar contador
-          fetch('/api/carrito').then(res => res.json()).then(data => {
-            const badge = document.getElementById('cart-count');
-            if (badge) {
-              if (data.cantidad > 0) {
-                badge.textContent = data.cantidad;
-                badge.classList.remove('hidden');
-              } else {
-                badge.textContent = '';
-                badge.classList.add('hidden');
-              }
-            }
-          });
-        } else {
-          alert(data.message || 'No se pudo agregar');
-        }
-      })
-      .catch((err) => {
-        btn.disabled = false;
-        if (err.message !== 'No logueado') {
-          alert('Error al agregar al carrito');
-        }
-      });
-    }
-  });
+  // Los eventos de agregar al carrito y favoritos ahora son manejados por el componente product_card.js
 }
 
 function showLoader() {

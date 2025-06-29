@@ -65,15 +65,94 @@
         {% include 'componentes_carrusel_productos.html' %}
     </div>
 </div>
+<!-- NUEVA SECCIÓN: Beneficios y CTA -->
+<div class="container mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center mb-8">
+    <div>
+      <span class="text-4xl text-green-500"><i class="fas fa-star"></i></span>
+      <h3 class="font-bold mt-2 mb-1">Calidad Garantizada</h3>
+      <p class="text-gray-600 text-sm">Solo productos originales y seleccionados.</p>
+    </div>
+    <div>
+      <span class="text-4xl text-green-500"><i class="fas fa-user-friends"></i></span>
+      <h3 class="font-bold mt-2 mb-1">Atención Personalizada</h3>
+      <p class="text-gray-600 text-sm">Te asesoramos en tu compra y rutina.</p>
+    </div>
+    <div>
+      <span class="text-4xl text-green-500"><i class="fas fa-shipping-fast"></i></span>
+      <h3 class="font-bold mt-2 mb-1">Envíos Rápidos</h3>
+      <p class="text-gray-600 text-sm">Recibe tu pedido en tiempo récord.</p>
+    </div>
+    <div>
+      <span class="text-4xl text-green-500"><i class="fas fa-gift"></i></span>
+      <h3 class="font-bold mt-2 mb-1">Promos Exclusivas</h3>
+      <p class="text-gray-600 text-sm">Descuentos y regalos solo para ti.</p>
+    </div>
+  </div>
+  <div class="text-center my-8">
+    <a href="/tienda" class="bg-green-500 text-white px-8 py-3 rounded-full font-bold text-lg shadow hover:bg-green-600 transition">
+      ¡Explora la tienda ahora!
+    </a>
+  </div>
+</div>
+<!-- SECCIÓN: Motivos para comprar en nuestra tienda -->
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-2xl font-extrabold text-green-600 mb-6 text-center">¿Por qué comprar en bycint Cosméticos?</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-3xl text-pink-500 mb-2"><i class="fas fa-heart"></i></span>
+      <h3 class="font-bold mb-2">Pasión por la belleza</h3>
+      <p class="text-gray-600 text-sm">Seleccionamos cada producto pensando en ti y en lo mejor para tu piel.</p>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-3xl text-yellow-500 mb-2"><i class="fas fa-certificate"></i></span>
+      <h3 class="font-bold mb-2">Garantía y confianza</h3>
+      <p class="text-gray-600 text-sm">Solo trabajamos con marcas originales y productos certificados.</p>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+      <span class="text-3xl text-green-500 mb-2"><i class="fas fa-hand-holding-usd"></i></span>
+      <h3 class="font-bold mb-2">Precios justos</h3>
+      <p class="text-gray-600 text-sm">Ofrecemos promociones y descuentos exclusivos para nuestra comunidad.</p>
+    </div>
+  </div>
+</div>
+<!-- SECCIÓN: Preguntas frecuentes rápidas -->
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-2xl font-extrabold text-green-600 mb-6 text-center">Preguntas frecuentes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-green-50 rounded-xl shadow p-6">
+      <h3 class="font-bold mb-2 text-green-700"><i class="fas fa-shipping-fast mr-2"></i>¿Cuánto tarda el envío?</h3>
+      <p class="text-gray-600 text-sm">Enviamos tu pedido en menos de 24h en Cañete y 2-4 días a otras provincias.</p>
+    </div>
+    <div class="bg-green-50 rounded-xl shadow p-6">
+      <h3 class="font-bold mb-2 text-green-700"><i class="fas fa-undo-alt mr-2"></i>¿Puedo cambiar o devolver un producto?</h3>
+      <p class="text-gray-600 text-sm">Sí, tienes hasta 7 días para cambios o devoluciones. Consulta nuestra política de cambios.</p>
+    </div>
+    <div class="bg-green-50 rounded-xl shadow p-6">
+      <h3 class="font-bold mb-2 text-green-700"><i class="fas fa-credit-card mr-2"></i>¿Qué métodos de pago aceptan?</h3>
+      <p class="text-gray-600 text-sm">Aceptamos Yape, transferencias, tarjetas y pagos en efectivo al recibir.</p>
+    </div>
+  </div>
+</div>
 <!-- Sección de suscripción a la comunidad -->
+{% if not session['suscriptor_email'] %}
 <div class="container mx-auto px-4 mb-12">
     <div class="bg-orange-500 rounded-xl py-8 px-4 md:px-12 text-center text-white shadow-lg max-w-4xl mx-auto">
         <h2 class="font-bold text-lg md:text-xl mb-2 uppercase tracking-wide">Únete a nuestra comunidad</h2>
         <p class="mb-4 text-sm md:text-base text-white">Suscríbete para recibir las últimas noticias, ofertas exclusivas y consejos de belleza.</p>
+        <!-- Formulario de suscripción -->
         <form action="{{ url_for('suscribirse') }}" method="POST" class="flex flex-col md:flex-row justify-center items-center gap-3 max-w-xl mx-auto mb-2">
             <input type="email" name="correo" placeholder="Ingresar correo electrónico" required class="flex-1 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300 border border-gray-200">
             <button type="submit" class="bg-black text-white font-semibold px-6 py-2 rounded-full hover:bg-gray-900 transition">Suscribirme</button>
         </form>
+        <!-- Opción para recordar suscripción -->
+        <div class="mt-4 pt-4 border-t border-orange-400">
+            <p class="text-sm text-orange-100 mb-2">¿Ya estás suscrito?</p>
+            <form action="{{ url_for('recordar_suscripcion') }}" method="POST" class="flex flex-col md:flex-row justify-center items-center gap-3 max-w-xl mx-auto">
+                <input type="email" name="correo" placeholder="Ingresa tu correo suscrito" required class="flex-1 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300 border border-gray-200">
+                <button type="submit" class="bg-orange-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-orange-700 transition">Recordar suscripción</button>
+            </form>
+        </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="mt-2 max-w-md mx-auto">
@@ -87,66 +166,10 @@
         {% endwith %}
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script>
-    // Hero Carrusel
-    const heroCarouselInner = document.getElementById('heroCarouselInner');
-    const heroPrevBtn = document.getElementById('heroCarouselPrev');
-    const heroNextBtn = document.getElementById('heroCarouselNext');
-    const heroDots = [
-        document.getElementById('heroDot0'),
-        document.getElementById('heroDot1'),
-        document.getElementById('heroDot2')
-    ];
-    let heroCurrent = 0;
-    const heroTotal = 3;
-
-    function updateHeroCarousel() {
-        heroCarouselInner.style.transform = `translateX(-${heroCurrent * 100}%)`;
-        heroDots.forEach((dot, i) => {
-            dot.classList.toggle('bg-red-500', i === heroCurrent);
-            dot.classList.toggle('bg-gray-300', i !== heroCurrent);
-        });
-    }
-    heroPrevBtn.addEventListener('click', () => {
-        heroCurrent = (heroCurrent - 1 + heroTotal) % heroTotal;
-        updateHeroCarousel();
-    });
-    heroNextBtn.addEventListener('click', () => {
-        heroCurrent = (heroCurrent + 1) % heroTotal;
-        updateHeroCarousel();
-    });
-    heroDots.forEach((dot, i) => {
-        dot.addEventListener('click', () => {
-            heroCurrent = i;
-            updateHeroCarousel();
-        });
-    });
-    // Opcional: autoplay
-    setInterval(() => {
-        heroCurrent = (heroCurrent + 1) % heroTotal;
-        updateHeroCarousel();
-    }, 7000);
-
-    // Swiper para productos destacados
-    new Swiper('.productosSwiper', {
-        slidesPerView: 2,
-        spaceBetween: 20,
-        navigation: {
-            nextEl: '.productos-swiper-btn.swiper-button-next',
-            prevEl: '.productos-swiper-btn.swiper-button-prev',
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        breakpoints: {
-            640: { slidesPerView: 3 },
-            1024: { slidesPerView: 5 },
-        },
-    });
-</script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %} 

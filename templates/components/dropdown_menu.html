@@ -1,0 +1,15 @@
+{% macro dropdown_menu(items, trigger_text, trigger_url="", trigger_classes="", menu_classes="") %}
+<li class="relative group">
+    <a href="{{ trigger_url }}" class="px-3 py-1 rounded hover:bg-green-200 hover:text-green-900 transition flex items-center {{ trigger_classes }}">
+        {{ trigger_text }}
+        <svg class="ml-1 w-4 h-4 text-green-700 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </a>
+    <ul class="absolute left-0 top-full mt-1 w-48 bg-white border border-green-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto {{ menu_classes }}">
+        {% for item in items %}
+            <li><a href="{{ item.url }}" class="block px-4 py-2 hover:bg-green-100">{{ item.text }}</a></li>
+        {% endfor %}
+    </ul>
+</li>
+{% endmacro %} 

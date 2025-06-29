@@ -1,0 +1,8 @@
+{% macro section_card(title="", classes="", id="") %}
+<section {% if id %}id="{{ id }}"{% endif %} class="bg-white rounded-xl shadow p-10 min-w-0 {{ classes }}">
+    {% if title %}
+        <h2 class="text-2xl font-bold mb-6">{{ title }}</h2>
+    {% endif %}
+    {{ caller() }}
+</section>
+{% endmacro %} 

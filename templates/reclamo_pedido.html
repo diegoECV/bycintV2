@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Reclamo de Pedido{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white rounded-xl shadow p-8 mt-10">
+  <h1 class="text-2xl font-bold mb-4 text-red-700">Reclamo sobre el Pedido #{{ pedido_id }}</h1>
+  <form method="POST">
+    <div class="mb-4">
+      <label class="block font-semibold mb-2">Motivo del reclamo</label>
+      <input type="text" name="motivo" required class="w-full px-4 py-2 border border-gray-300 rounded">
+    </div>
+    <div class="mb-4">
+      <label class="block font-semibold mb-2">Descripción</label>
+      <textarea name="descripcion" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded"></textarea>
+    </div>
+    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700 transition">Enviar reclamo</button>
+    <a href="{{ url_for('mis_pedidos') }}" class="ml-4 text-gray-600 hover:underline">Cancelar</a>
+  </form>
+</div>
+{% endblock %} 

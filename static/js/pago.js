@@ -127,14 +127,189 @@ ready(function() {
   placeOrderButton.addEventListener('click', function(e) {
     e.preventDefault();
     const selectedPaymentOption = document.querySelector('input[name="payment-option"]:checked').value;
+    
+    if (!termsCheckbox.checked) {
+      alert('Debes aceptar los términos y condiciones');
+      return;
+    }
+    
     if (selectedPaymentOption === 'yape') {
       showYapeModal();
       return;
+    } else if (selectedPaymentOption === 'credit-card') {
+      // Procesar pago con PayPal o Stripe
+      procesarPagoTarjeta();
+      return;
     }
+    
     if (validateForm()) {
       showReceipt();
     }
   });
+
+  // --- Procesar pago con tarjeta (PayPal/Stripe) ---
+  async function procesarPagoTarjeta() {
+    try {
+      // Obtener datos del carrito
+      const carritoItems = await obtenerCarritoItems();
+      const total = parseFloat(document.getElementById('total').textContent.replace('S/', '').trim());
+      
+      if (!carritoItems || carritoItems.length === 0) {
+        alert('El carrito está vacío');
+        return;
+      }
+      
+      // Mostrar loading
+      placeOrderButton.disabled = true;
+      placeOrderButton.textContent = 'Procesando pago...';
+      
+      // Intentar primero con PayPal
+      const paypalResult = await procesarPagoPayPal(carritoItems, total);
+      
+      if (paypalResult.success) {
+        // Redirigir a PayPal
+        window.location.href = paypalResult.approval_url;
+      } else {
+        // Si PayPal falla, intentar con Stripe
+        const stripeResult = await procesarPagoStripe(carritoItems, total);
+        
+        if (stripeResult.success) {
+          if (stripeResult.requires_action) {
+            // Manejar autenticación 3D Secure
+            await manejarStripe3DS(stripeResult.payment_intent_client_secret);
+          } else {
+            // Pago exitoso
+            mostrarExitoPago(stripeResult.pedido_id);
+          }
+        } else {
+          alert('Error al procesar el pago: ' + stripeResult.message);
+        }
+      }
+      
+    } catch (error) {
+      console.error('Error al procesar pago:', error);
+      alert('Error al procesar el pago. Inténtalo de nuevo.');
+    } finally {
+      // Restaurar botón
+      placeOrderButton.disabled = false;
+      placeOrderButton.textContent = 'REALIZAR PEDIDO';
+    }
+  }
+
+  // --- Procesar pago con PayPal ---
+  async function procesarPagoPayPal(items, total) {
+    try {
+      const response = await fetch('/api/crear-pago-paypal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: items,
+          total: total
+        })
+      });
+      
+      const result = await response.json();
+      return result;
+      
+    } catch (error) {
+      console.error('Error PayPal:', error);
+      return { success: false, message: 'Error al conectar con PayPal' };
+    }
+  }
+
+  // --- Procesar pago con Stripe ---
+  async function procesarPagoStripe(items, total) {
+    try {
+      // Crear método de pago con Stripe
+      const paymentMethod = await stripe.createPaymentMethod({
+        type: 'card',
+        card: {
+          number: cardNumberInput.value.replace(/\s/g, ''),
+          exp_month: parseInt(expiryMonth.value),
+          exp_year: parseInt(expiryYear.value),
+          cvc: securityCode.value,
+        },
+        billing_details: {
+          name: document.getElementById('first-name').value + ' ' + document.getElementById('last-name').value,
+          email: document.getElementById('email').value,
+        },
+      });
+      
+      if (paymentMethod.error) {
+        return { success: false, message: paymentMethod.error.message };
+      }
+      
+      // Enviar al servidor
+      const response = await fetch('/api/crear-pago-stripe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: items,
+          total: total,
+          payment_method_id: paymentMethod.paymentMethod.id
+        })
+      });
+      
+      const result = await response.json();
+      return result;
+      
+    } catch (error) {
+      console.error('Error Stripe:', error);
+      return { success: false, message: 'Error al procesar la tarjeta' };
+    }
+  }
+
+  // --- Manejar autenticación 3D Secure de Stripe ---
+  async function manejarStripe3DS(clientSecret) {
+    try {
+      const result = await stripe.confirmCardPayment(clientSecret);
+      
+      if (result.error) {
+        alert('Error en la autenticación: ' + result.error.message);
+      } else if (result.paymentIntent.status === 'succeeded') {
+        // Pago exitoso después de 3D Secure
+        mostrarExitoPago();
+      }
+    } catch (error) {
+      console.error('Error 3DS:', error);
+      alert('Error en la autenticación de la tarjeta');
+    }
+  }
+
+  // --- Obtener items del carrito ---
+  async function obtenerCarritoItems() {
+    try {
+      const response = await fetch('/api/carrito');
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.items.map(item => ({
+          id: item.producto_id,
+          nombre: item.nombre,
+          precio: parseFloat(item.precio),
+          cantidad: item.cantidad
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error('Error al obtener carrito:', error);
+      return [];
+    }
+  }
+
+  // --- Mostrar éxito del pago ---
+  function mostrarExitoPago(pedidoId = null) {
+    closeModal();
+    if (pedidoId) {
+      window.location.href = `/pedido/${pedidoId}`;
+    } else {
+      window.location.href = '/mis-pedidos';
+    }
+  }
 
   // --- Yape Modal ---
   function showYapeModal() {
@@ -201,185 +376,149 @@ ready(function() {
     document.getElementById('receipt-email').textContent = formData.email;
     document.getElementById('receipt-total').textContent = formData.total;
     document.getElementById('receipt-payment-method').textContent = getPaymentMethodName(formData.paymentMethod);
-    // Productos
-    let productNames = '';
-    products.forEach(product => {
-      productNames += product.name + ', ';
-    });
-    productNames = productNames.slice(0, -2);
-    document.getElementById('receipt-product-name').textContent = productNames;
     document.getElementById('receipt-subtotal').textContent = formData.subtotal;
-    // Copiar descuento al recibo
-    if (document.getElementById('descuento') && document.getElementById('receipt-descuento')) {
-      document.getElementById('receipt-descuento').textContent = document.getElementById('descuento').textContent;
-    }
-    // Copiar envío al recibo
-    if (document.getElementById('envio') && document.getElementById('receipt-envio')) {
-      document.getElementById('receipt-envio').textContent = document.getElementById('envio').textContent;
-    }
+    document.getElementById('receipt-descuento').textContent = document.getElementById('descuento').textContent;
+    document.getElementById('receipt-envio').textContent = document.getElementById('envio').textContent;
     document.getElementById('receipt-total-detail').textContent = formData.total;
-    document.getElementById('receipt-billing-address').textContent = `${formData.address}, ${formData.city}, ${formData.region}, ${formData.country}`;
+    document.getElementById('receipt-billing-address').textContent = `${formData.address}, ${formData.city}, ${formData.country}`;
     document.getElementById('receipt-phone').textContent = formData.phone;
-    fetch('/api/guardar_pedido', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        total: formData.total.replace('S/', '').replace(',', '.'),
-        products: products
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        document.getElementById('receipt-order-number').textContent = data.pedido_id;
-        // Vaciar el carrito (window.products) tras el pago exitoso
-        window.products = [];
-        // Actualizar el resumen del modal de pago
-        loadProducts();
-        calculateTotals();
-      }
-    });
+    // Mostrar modal
     receiptModal.classList.remove('hidden');
   }
   closeReceiptBtns.forEach(btn => btn.addEventListener('click', () => receiptModal.classList.add('hidden')));
   receiptModal.addEventListener('click', function(e) {
     if (e.target === receiptModal) receiptModal.classList.add('hidden');
   });
-  if (printReceiptButton) {
-    printReceiptButton.addEventListener('click', function() {
-      window.print();
-    });
-  }
+  printReceiptButton.addEventListener('click', function() {
+    window.print();
+  });
 
-  // --- Productos y totales ---
+  // --- Funciones auxiliares ---
   function loadProducts() {
     const productList = document.getElementById('product-list');
+    if (!productList) return;
+    
+    // Obtener productos del carrito (esto debería venir del backend)
+    const carritoItems = window.carritoItems || [];
+    
     productList.innerHTML = '';
-    if (products.length === 0) {
-      productList.innerHTML = '<div class="text-center text-gray-400">No hay productos</div>';
-    } else {
-      products.forEach(product => {
-        const cantidad = product.cantidad || 1;
-        const div = document.createElement('div');
-        div.className = 'flex justify-between border-b py-1';
-        div.innerHTML = `<span>${product.name} x${cantidad}</span><span>S/${(product.price * cantidad).toFixed(2)}</span>`;
-        productList.appendChild(div);
-      });
-    }
+    carritoItems.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'flex justify-between py-2 border-b';
+      itemDiv.innerHTML = `
+        <span class="text-sm">${item.nombre} x${item.cantidad}</span>
+        <span class="text-sm font-semibold">S/${(item.precio * item.cantidad).toFixed(2)}</span>
+      `;
+      productList.appendChild(itemDiv);
+    });
+    
+    calculateTotals();
   }
+
   function calculateTotals() {
-    const subtotal = products.reduce((sum, product) => sum + product.price * (product.cantidad || 1), 0);
-    const total = subtotal;
-    document.getElementById('subtotal').textContent = `S/${subtotal.toFixed(2)}`;
-    document.getElementById('total').textContent = `S/${total.toFixed(2)}`;
-    document.getElementById('yape-amount').textContent = `S/${total.toFixed(2)}`;
+    // Los totales ya están calculados en el carrito
+    // Esta función se puede usar para recalcular si es necesario
   }
 
-  // --- QR para Yape ---
   function generateYapeQR() {
-    const totalAmount = document.getElementById('total').textContent;
-    const qrContent = `YAPE: ${yapeNumber} - Monto: ${totalAmount}`;
-    const qrContainer = document.getElementById('yape-qr');
-    qrContainer.innerHTML = '';
-    if (window.qrcode) {
-      const qr = window.qrcode(0, 'M');
-      qr.addData(qrContent);
-      qr.make();
-      qrContainer.innerHTML = qr.createImgTag(5);
-    }
+    const yapeQR = document.getElementById('yape-qr');
+    if (!yapeQR) return;
+    
+    // Generar QR para Yape (en producción, usar una librería real)
+    const total = document.getElementById('total').textContent;
+    const qrText = `yape://pay?phone=${yapeNumber}&amount=${total.replace('S/', '').trim()}`;
+    
+    // Usar QR Server API para generar el código QR
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
+    yapeQR.innerHTML = `<img src="${qrUrl}" alt="QR Yape" class="w-full h-full object-contain" />`;
   }
 
-  // --- Validación ---
   function validateForm() {
     let isValid = true;
-    // Eliminar errores previos
-    document.querySelectorAll('.error-message').forEach(e => e.remove());
-    document.querySelectorAll('.border-red-500').forEach(e => e.classList.remove('border-red-500'));
     const selectedPaymentOption = document.querySelector('input[name="payment-option"]:checked').value;
-    if (selectedPaymentOption === 'credit-card') {
-      if (!cardNumberInput.value.trim() || cardNumberInput.value.replace(/\s/g, '').length < 16) {
-        showValidationError(cardNumberInput, 'Ingrese un número de tarjeta válido');
+    
+    // Validar campos obligatorios
+    const requiredFields = ['first-name', 'last-name', 'email', 'phone', 'address', 'country', 'city'];
+    requiredFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (!field.value.trim()) {
+        showValidationError(field, 'Este campo es obligatorio');
         isValid = false;
-      }
-      if (expiryMonth.value === '' || expiryYear.value === '') {
-        showValidationError(expiryMonth, 'Seleccione una fecha de caducidad válida');
-        isValid = false;
-      }
-      if (!securityCode.value.trim() || securityCode.value.length < 3) {
-        showValidationError(securityCode, 'Ingrese un código de seguridad válido');
-        isValid = false;
-      }
-    } else if (selectedPaymentOption === 'yape') {
-      if (!cardNumberInput.value.trim() || cardNumberInput.value.length !== 9 || !/^\d+$/.test(cardNumberInput.value)) {
-        showValidationError(cardNumberInput, 'Ingrese un número celular válido (9 dígitos)');
-        isValid = false;
-      }
-    }
-    // Facturación
-    const requiredFields = [
-      { id: 'first-name', message: 'Ingrese su nombre' },
-      { id: 'last-name', message: 'Ingrese su apellido' },
-      { id: 'id-document', message: 'Ingrese su documento de identidad' },
-      { id: 'phone', message: 'Ingrese su número de teléfono' }
-    ];
-    requiredFields.forEach(field => {
-      const el = document.getElementById(field.id);
-      if (!el.value.trim()) {
-        showValidationError(el, field.message);
-        isValid = false;
+      } else {
+        clearValidationError(field);
       }
     });
-    // Email
-    const email = document.getElementById('email');
-    if (email.value.trim() && !isValidEmail(email.value)) {
-      showValidationError(email, 'Ingrese un correo electrónico válido');
+    
+    // Validar email
+    const email = document.getElementById('email').value;
+    if (email && !isValidEmail(email)) {
+      showValidationError(document.getElementById('email'), 'Email inválido');
       isValid = false;
     }
-    // Términos
-    if (!termsCheckbox.checked) {
-      showValidationError(termsCheckbox, 'Debe aceptar los términos y condiciones');
-      isValid = false;
+    
+    // Validar tarjeta si es método de pago
+    if (selectedPaymentOption === 'credit-card') {
+      if (!cardNumberInput.value.trim()) {
+        showValidationError(cardNumberInput, 'Número de tarjeta requerido');
+        isValid = false;
+      }
+      if (!expiryMonth.value || !expiryYear.value) {
+        showValidationError(expiryMonth, 'Fecha de vencimiento requerida');
+        isValid = false;
+      }
+      if (!securityCode.value.trim()) {
+        showValidationError(securityCode, 'Código de seguridad requerido');
+        isValid = false;
+      }
     }
+    
     return isValid;
   }
+
   function showValidationError(element, message) {
     element.classList.add('border-red-500');
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message text-xs text-red-500 mt-1';
-    errorDiv.textContent = message;
-    if (element.type === 'checkbox') {
-      element.parentElement.appendChild(errorDiv);
-    } else {
-      element.parentElement.appendChild(errorDiv);
+    element.classList.remove('border-blue-200');
+    
+    // Remover mensaje de error anterior
+    const existingError = element.parentNode.querySelector('.error-message');
+    if (existingError) {
+      existingError.remove();
     }
+    
+    // Agregar nuevo mensaje
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message text-red-500 text-xs mt-1';
+    errorDiv.textContent = message;
+    element.parentNode.appendChild(errorDiv);
+    
+    // Limpiar error al escribir
     element.addEventListener('input', function handler() {
-      element.classList.remove('border-red-500');
-      const err = element.parentElement.querySelector('.error-message');
-      if (err) err.remove();
+      clearValidationError(element);
       element.removeEventListener('input', handler);
     });
   }
+
+  function clearValidationError(element) {
+    element.classList.remove('border-red-500');
+    element.classList.add('border-blue-200');
+    
+    const errorMessage = element.parentNode.querySelector('.error-message');
+    if (errorMessage) {
+      errorMessage.remove();
+    }
+  }
+
   function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-  function getPaymentMethodName(method) {
-    switch(method) {
-      case 'credit-card': return 'Tarjeta de crédito/débito';
-      case 'bank-transfer': return 'Transferencia bancaria';
-      case 'yape': return 'Pago Off Yape';
-      default: return 'Desconocido';
-    }
-  }
 
-  // --- Formato de número de tarjeta ---
-  cardNumberInput.addEventListener('input', function() {
-    if (paymentMethodSelect.value === 'yape') return;
-    let value = this.value.replace(/\D/g, '');
-    if (value.length > 0) value = value.match(/.{1,4}/g).join(' ');
-    this.value = value;
-  });
+  function getPaymentMethodName(method) {
+    const methods = {
+      'credit-card': 'Tarjeta de crédito/débito',
+      'bank-transfer': 'Transferencia bancaria',
+      'yape': 'Yape'
+    };
+    return methods[method] || method;
+  }
 }); 

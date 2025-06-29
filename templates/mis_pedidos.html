@@ -19,9 +19,21 @@
         </div>
         <div class="flex items-center gap-4">
           <span class="font-bold text-green-600 text-lg">S/ {{ '%.2f' % pedido.total }}</span>
-          <span class="bg-green-100 text-green-700 rounded px-3 py-1 text-xs font-bold">{{ pedido.estado }}</span>
-          <span class="bg-yellow-50 text-yellow-700 rounded px-3 py-1 text-xs font-bold">+{{ pedido.puntos }} pts</span>
+          <span class="bg-green-100 text-green-700 rounded px-3 py-1 text-xs font-bold">
+            {{ pedido.estado }}
+          </span>
+          <span class="bg-yellow-50 text-yellow-700 rounded px-3 py-1 text-xs font-bold" title="Gana 5 puntos por cada S/100 gastados">+{{ pedido.puntos }} pts</span>
           <a href="{{ url_for('detalle_pedido', pedido_id=pedido.id) }}" class="text-blue-600 underline font-semibold hover:text-blue-800">Ver detalle</a>
+          <!-- Botón descargar PDF -->
+          <a href="{{ url_for('descargar_pedido_pdf', pedido_id=pedido.id) }}" class="ml-2 bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs font-semibold hover:bg-gray-200 transition" title="Descargar comprobante en PDF"><i class="fa-solid fa-file-pdf mr-1 text-red-500"></i> PDF</a>
+          <!-- Botón cancelar pedido (solo si no está entregado/cancelado) -->
+          {% if pedido.estado not in ['Entregado', 'Cancelado'] %}
+          <form method="POST" action="{{ url_for('cancelar_pedido', pedido_id=pedido.id) }}" class="inline">
+            <button type="submit" class="ml-2 bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-semibold hover:bg-red-200 transition" onclick="return confirm('¿Seguro que deseas cancelar este pedido?');"><i class="fa-solid fa-xmark mr-1"></i> Cancelar</button>
+          </form>
+          {% endif %}
+          <!-- Botón reclamo -->
+          <a href="{{ url_for('reclamo_pedido', pedido_id=pedido.id) }}" class="ml-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-xs font-semibold hover:bg-yellow-200 transition" title="¿Tuviste un problema? Haz un reclamo"><i class="fa-solid fa-exclamation-circle mr-1"></i> Reclamo</a>
         </div>
       </div>
       <!-- Barra de seguimiento -->
